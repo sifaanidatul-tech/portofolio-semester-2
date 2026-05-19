@@ -1,10 +1,104 @@
+// ============ CUSTOM CURSOR ============
+// Replaces default OS cursor with a styled ring + dot
+const customCursor    = document.getElementById('customCursor');
+const customCursorDot = document.getElementById('customCursorDot');
+let mouseX = 0, mouseY = 0;
+let cursorX = 0, cursorY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    // Dot snaps instantly
+    if (customCursorDot) {
+        customCursorDot.style.left = mouseX + 'px';
+        customCursorDot.style.top  = mouseY + 'px';
+    }
+});
+
+// Ring follows with smooth lag
+function animateCursor() {
+    cursorX += (mouseX - cursorX) * 0.12;
+    cursorY += (mouseY - cursorY) * 0.12;
+    if (customCursor) {
+        customCursor.style.left = cursorX + 'px';
+        customCursor.style.top  = cursorY + 'px';
+    }
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Expand cursor ring when hovering interactive elements
+document.querySelectorAll('a, button, .portfolio-card, .contact-item, .skill-icon').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        if (customCursor) { customCursor.style.width = '56px'; customCursor.style.height = '56px'; }
+    });
+    el.addEventListener('mouseleave', () => {
+        if (customCursor) { customCursor.style.width = '36px'; customCursor.style.height = '36px'; }
+    });
+});
+
+
+// ============ MAGNETIC BUTTONS ============
+// Buttons gently attract toward the cursor when nearby
+document.querySelectorAll('.magnetic-btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+        const rect   = btn.getBoundingClientRect();
+        const relX   = e.clientX - rect.left - rect.width  / 2;
+        const relY   = e.clientY - rect.top  - rect.height / 2;
+        const strength = 0.35;
+        btn.style.transform = `translate(${relX * strength}px, ${relY * strength}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+    });
+});
+
+
+// ============ LOADING SCREEN ============
+// Animates the loading intro, then removes it after delay
+(function initLoadingScreen() {
+    const ls      = document.getElementById('loadingScreen');
+    const lsName  = document.getElementById('lsName');
+    const lsPct   = document.getElementById('lsPercent');
+    if (!ls) return;
+
+    // Animate percentage counter 0 → 100
+    let pct = 0;
+    const pctInterval = setInterval(() => {
+        pct = Math.min(pct + Math.floor(Math.random() * 4) + 1, 100);
+        if (lsPct) lsPct.textContent = pct + '%';
+        if (pct >= 100) clearInterval(pctInterval);
+    }, 23);
+
+    // Build animated name letters
+    const name = 'ANIDATUL SIFA';
+    name.split('').forEach((char, i) => {
+        const span = document.createElement('span');
+        span.className = char === ' ' ? 'ls-letter space' : 'ls-letter';
+        if (char !== ' ') span.textContent = char;
+        span.style.animationDelay = (0.1 + i * 0.07) + 's';
+        if (lsName) lsName.appendChild(span);
+    });
+
+    // Exit loading screen at 2.8s
+    setTimeout(() => {
+        ls.classList.add('ls-exit');
+        // Remove from DOM after exit transition completes
+        setTimeout(() => {
+            ls.style.display = 'none';
+            ls.remove();
+        }, 850);
+    }, 2800);
+})();
+
+
 // ============ THEME TOGGLE ============
 const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.getElementById('themeIcon');
-const body = document.body;
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
 let isDark = false;
 
-const sunPath = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
+const sunPath  = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
 const moonPath = '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
 
 themeToggle.addEventListener('click', () => {
@@ -12,24 +106,28 @@ themeToggle.addEventListener('click', () => {
     body.classList.toggle('dark');
     body.classList.toggle('light');
     themeIcon.innerHTML = isDark ? moonPath : sunPath;
+    // Refresh particles and code symbols for new theme
     createParticles();
     createCodeSymbols();
     addTerminalDecoration();
 });
 
-// ============ CLOSE / OVERLAY ============
-const closeBtn = document.getElementById('closeBtn');
-const overlay = document.getElementById('overlay');
+
+// ============ CLOSE / GOODBYE OVERLAY ============
+const closeBtn    = document.getElementById('closeBtn');
+const overlay     = document.getElementById('overlay');
 const overlayClose = document.getElementById('overlayClose');
 
-closeBtn.addEventListener('click', () => { overlay.classList.add('active'); });
+closeBtn.addEventListener('click',    () => { overlay.classList.add('active'); });
 overlayClose.addEventListener('click', () => { overlay.classList.remove('active'); });
 
+
 // ============ NAVBAR & SIDEBAR VISIBILITY ============
-const navbar = document.getElementById('navbar');
+const navbar  = document.getElementById('navbar');
 const sidebar = document.getElementById('sidebar');
 
-const aboutSection = document.getElementById('about');
+// Hide sidebar when About section is visible
+const aboutSection  = document.getElementById('about');
 const aboutObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -41,6 +139,7 @@ const aboutObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 aboutObserver.observe(aboutSection);
 
+// Hide navbar after scrolling 100px
 window.addEventListener('scroll', () => {
     const st = window.pageYOffset;
     if (st > 100) {
@@ -50,6 +149,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// Reveal navbar/sidebar when mouse approaches top
 document.addEventListener('mousemove', (e) => {
     if (e.clientY < 60) {
         navbar.classList.remove('hidden');
@@ -57,35 +157,38 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
+
 // ============ RIPPLE EFFECT ON SIDEBAR ============
+// Dark mode: ripple on click
 document.querySelectorAll('.sidebar a').forEach(link => {
     link.addEventListener('click', function (e) {
         if (isDark) {
-            const rect = this.getBoundingClientRect();
+            const rect   = this.getBoundingClientRect();
             const ripple = document.createElement('div');
             ripple.classList.add('ripple');
             const size = Math.max(rect.width, rect.height);
             ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            ripple.style.left  = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top   = (e.clientY - rect.top  - size / 2) + 'px';
             this.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         }
     });
 
-    // Nav particles on hover
+    // Dark mode: nav particles on hover
     link.addEventListener('mouseenter', function (e) {
         if (!isDark) return;
         for (let i = 0; i < 3; i++) {
             const particle = document.createElement('div');
             particle.classList.add('nav-particle');
             particle.style.left = (e.clientX + Math.random() * 30 - 15) + 'px';
-            particle.style.top = (e.clientY + Math.random() * 30 - 15) + 'px';
+            particle.style.top  = (e.clientY + Math.random() * 30 - 15) + 'px';
             document.body.appendChild(particle);
             setTimeout(() => particle.remove(), 1000);
         }
     });
 });
+
 
 // ============ SMOOTH SCROLL ============
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -96,24 +199,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     });
 });
 
-// ============ SKILL BARS ANIMATION ============
-const skillBars = document.querySelectorAll('.skill-bar-fill');
-let skillsAnimated = false;
-const skillsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !skillsAnimated) {
-            skillsAnimated = true;
-            skillBars.forEach((bar, i) => {
-                setTimeout(() => {
-                    bar.style.width = bar.dataset.width + '%';
-                }, i * 200);
-            });
-        }
-    });
-}, { threshold: 0.3 });
-document.querySelectorAll('.skills-list').forEach(el => skillsObserver.observe(el));
 
-// ============ SCROLL ANIMATIONS ============
+// ============ SCROLL ANIMATIONS (fade up on enter viewport) ============
 const animateObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -123,1256 +210,12 @@ const animateObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 document.querySelectorAll('.animate-in').forEach(el => animateObserver.observe(el));
 
-// ============ PORTFOLIO CAROUSEL ============
 
-// ============ PORTFOLIO CAROUSEL ============
-const carousel = document.getElementById('portfolioCarousel');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const cards = carousel ? carousel.querySelectorAll('.portfolio-card') : [];
-
-function updateCarouselFocus() {
-    if (!carousel || cards.length === 0) return;
-
-    const carouselRect = carousel.getBoundingClientRect();
-    const centerX = carouselRect.left + carouselRect.width / 2;
-
-    cards.forEach(card => {
-        card.classList.remove('center', 'near');
-
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(centerX - cardCenter);
-
-        if (distance < 120) {
-            card.classList.add('center');
-        } else if (distance < 240) {
-            card.classList.add('near');
-        }
-    });
-}
-
-if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-        carousel.scrollBy({
-            left: -250,
-            behavior: 'smooth'
-        });
-    });
-}
-
-if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-        carousel.scrollBy({
-            left: 250,
-            behavior: 'smooth'
-        });
-    });
-}
-
-if (carousel) {
-    carousel.addEventListener('scroll', updateCarouselFocus);
-    window.addEventListener('resize', updateCarouselFocus);
-
-    setTimeout(() => {
-        updateCarouselFocus();
-    }, 300);
-}
-
-// ============ PARTICLES ============
-const particlesContainer = document.getElementById('particles');
-
-function createParticles() {
-    particlesContainer.innerHTML = '';
-    const count = window.innerWidth < 900 ? 15 : 30;
-    for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        const size = Math.random() * 6 + 3;
-        p.style.width = size + 'px';
-        p.style.height = size + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.background = isDark
-            ? 'rgba(100, 150, 255, 0.3)'
-            : 'rgba(244, 132, 142, 0.25)';
-        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        p.style.animationDelay = (Math.random() * 8) + 's';
-        particlesContainer.appendChild(p);
-    }
-}
-createParticles();
-
-// ============ FLOATING CODE SYMBOLS (DARK MODE) ============
-// ============ FLOATING CODE SYMBOLS (DARK MODE - ANIMASI KEREN) ============
-function createCodeSymbols() {
-    document.querySelectorAll('.code-symbol').forEach(el => el.remove());
-    if (!isDark) return;
-    
-    // Simbol seperti kode program asli
-    const symbols = [
-        '<div>', 'const x', '{ }', '=>', 'import', 
-        'return', '0101', 'function', 'class', 
-        'npm run', 'git push', 'if (true)', '10101', '</>'
-    ];
-    
-    for (let i = 0; i < 25; i++) {
-        const sym = document.createElement('div');
-        sym.classList.add('code-symbol');
-        sym.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        
-        // Posisi random horizontal
-        sym.style.left = Math.random() * 90 + '%';
-        
-        // Ukuran font acak
-        sym.style.fontSize = (Math.random() * 6 + 10) + 'px';
-        
-        // Kecepatan animasi random (biar tidak serempak)
-        sym.style.animationDuration = (Math.random() * 4 + 3) + 's, 2s';
-        sym.style.animationDelay = (Math.random() * 5) + 's, 0s';
-        
-        // Warna hijau neon / biru terang dengan glow
-        sym.style.color = Math.random() > 0.5 ? '#44ff88' : '#6699ff';
-        sym.style.textShadow = `0 0 ${Math.random() * 10 + 5}px ${sym.style.color}`;
-        
-        document.body.appendChild(sym);
-    }
-}
-createCodeSymbols();
-// ============ TERMINAL DECORATION (DARK MODE ABOUT) ============
-function addTerminalDecoration() {
-    document.querySelectorAll('.terminal-line').forEach(el => el.remove());
-    if (!isDark) return;
-    const codes = [
-        'console.log("Hello World");',
-        'const app = new Portfolio();',
-        'function createMagic() { }',
-        'return <App />;',
-        'npm install creativity',
-        'git commit -m "awesome"'
-    ];
-    const aboutSec = document.querySelector('.about-section');
-    if (!aboutSec) return;
-    codes.forEach((code, i) => {
-        const line = document.createElement('div');
-        line.classList.add('terminal-line');
-        line.textContent = '> ' + code;
-        line.style.position = 'absolute';
-        line.style.top = (20 + i * 30) + 'px';
-        line.style.left = '20px';
-        line.style.animationDelay = (i * 0.5) + 's';
-        aboutSec.appendChild(line);
-    });
-}
-addTerminalDecoration();
-
-// ============ ROBOT EYE TRACKING ============
-const leftEye = document.getElementById('leftEye');
-const rightEye = document.getElementById('rightEye');
-const robotWrapper = document.getElementById('robotWrapper');
-
-document.addEventListener('mousemove', (e) => {
-    if (!robotWrapper) return;
-    const rect = robotWrapper.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = e.clientX - cx;
-    const dy = e.clientY - cy;
-    const angle = Math.atan2(dy, dx);
-    const maxMove = 6;
-    const mx = Math.cos(angle) * maxMove;
-    const my = Math.sin(angle) * maxMove;
-    if (leftEye) leftEye.style.transform = `translate(calc(-50% + ${mx}px), calc(-50% + ${my}px))`;
-    if (rightEye) rightEye.style.transform = `translate(calc(-50% + ${mx}px), calc(-50% + ${my}px))`;
-});
-
-robotWrapper.addEventListener('click', () => {
-    robotWrapper.classList.add('moving');
-    setTimeout(() => { robotWrapper.classList.remove('moving'); }, 2000);
-});
-
-// ============ GREETING TYPING EFFECT ============
-const greeting = document.querySelector('.profile-info .greeting');
-
-if (greeting) {
-    const greetingText = greeting.textContent;
-    greeting.textContent = '';
-    let charIndex = 0;
-
-    function typeGreeting() {
-        if (charIndex < greetingText.length) {
-            greeting.textContent += greetingText[charIndex];
-            charIndex++;
-            setTimeout(typeGreeting, 100);
-        }
-    }
-
-    setTimeout(typeGreeting, 500);
-}
-
-// ============ NAME REVEAL ============
-const nameEl = document.querySelector('.profile-info h1');
-
-if (nameEl) {
-    nameEl.style.opacity = '0';
-    nameEl.style.transform = 'translateY(20px)';
-
-    setTimeout(() => {
-        nameEl.style.transition = 'opacity 0.8s, transform 0.8s';
-        nameEl.style.opacity = '1';
-        nameEl.style.transform = 'translateY(0)';
-    }, 800);
-}
-
-// ============ TAGLINE REVEAL ============
-const tagline = document.querySelector('.profile-info .tagline');
-
-if (tagline) {
-    tagline.style.opacity = '0';
-    tagline.style.transform = 'translateY(15px)';
-
-    setTimeout(() => {
-        tagline.style.transition = 'opacity 0.8s, transform 0.8s';
-        tagline.style.opacity = '1';
-        tagline.style.transform = 'translateY(0)';
-    }, 1200);
-}
-
-// ============ EXPERIENCE BUTTON REVEAL ============
-const expBtn = document.querySelector('.experience-btn');
-
-if (expBtn) {
-    expBtn.style.opacity = '0';
-    expBtn.style.transform = 'scale(0.8)';
-
-    setTimeout(() => {
-        expBtn.style.transition = 'opacity 0.6s, transform 0.6s';
-        expBtn.style.opacity = '1';
-        expBtn.style.transform = 'scale(1)';
-    }, 1600);
-}
-
-// ============ AVATAR REVEAL ============
-const avatar = document.querySelector('.profile-avatar');
-
-if (avatar) {
-    avatar.style.opacity = '0';
-    avatar.style.transform = 'scale(0.5)';
-
-    setTimeout(() => {
-        avatar.style.transition = 'opacity 0.8s, transform 0.8s';
-        avatar.style.opacity = '1';
-        avatar.style.transform = 'scale(1)';
-    }, 400);
-}
-
-// ============ ROBOT EYE BLINK ============
-function blinkEyes() {
-    [leftEye, rightEye].forEach(eye => {
-        if (eye) {
-            eye.style.transition = 'transform 0.1s';
-            const ct = eye.style.transform;
-            eye.style.transform = ct + ' scaleY(0.1)';
-            setTimeout(() => { eye.style.transform = ct + ' scaleY(1)'; }, 150);
-        }
-    });
-}
-setInterval(() => { if (Math.random() > 0.5) blinkEyes(); }, 3000);
-
-
-
-const robot = document.getElementById("robotImg");
-const sound = document.getElementById("robotSound");
-
-robot.addEventListener("mousemove", () => {
-    robot.style.transform = "rotate(5deg) scale(1.05)";
-});
-
-robot.addEventListener("mouseleave", () => {
-    robot.style.transform = "rotate(0deg)";
-});
-
-robot.addEventListener("click", () => {
-    sound.play();
-});
-
-
-
-
-
-
-
-
-// ============ ANIMASI TAMBAHAN - TIDAK MENGUBAH KODE ASLI ============
-
-// === PORTFOLIO SECTION SCROLL REVEAL (CARD MUNCUL SATU PER SATU) ===
-const portfolioSection = document.getElementById('portfolio');
-const portfolioObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-        }
-    });
-}, { threshold: 0.15 });
-if (portfolioSection) portfolioObserver.observe(portfolioSection);
-
-// === CONTACT ITEMS SCROLL REVEAL ===
-const contactInfo = document.querySelector('.contact-info');
-const contactForm = document.querySelector('.contact-form');
-const contactObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, { threshold: 0.2 });
-if (contactInfo) contactObserver.observe(contactInfo);
-if (contactForm) contactObserver.observe(contactForm);
-
-// === SMOOTH NAVBAR: re-apply animasi masuk saat muncul kembali ===
-// (Sudah ditangani CSS keyframes, tidak perlu JS tambahan)
-
-// === SKILL ITEMS: Visibility via skills-list.visible ===
-// (Sudah ditangani observer asli di skillsObserver)
-
-// === TOMBOL HOVER: Efek scale + shadow dinamis ===
-document.querySelectorAll('.experience-btn, .submit-btn, .overlay-close').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transition = 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, letter-spacing 0.3s ease';
-    });
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = '';
-    });
-});
-
-// === PORTFOLIO CARD TILT EFFECT (3D SAAT HOVER) ===
-document.querySelectorAll('.portfolio-card').forEach(card => {
-    card.addEventListener('mousemove', function(e) {
-        const rect = this.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / centerY * -8;
-        const rotateY = (x - centerX) / centerX * 8;
-        this.style.transform = `translateY(-10px) scale(1.04) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        this.style.transition = 'transform 0.1s ease';
-    });
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = '';
-        this.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
-    });
-});
-
-// === ABOUT SECTION: photo dan text reveal ===
-const aboutInner = document.querySelector('.about-inner');
-const aboutRevealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, { threshold: 0.2 });
-if (aboutInner) aboutRevealObserver.observe(aboutInner);
-
-// === ROBOT WRAPPER: tambah visible untuk efek dark glow ===
-const robotWrapperEl = document.getElementById('robotWrapper');
-const robotObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        } else {
-            entry.target.classList.remove('visible');
-        }
-    });
-}, { threshold: 0.2 });
-if (robotWrapperEl) robotObserver.observe(robotWrapperEl);
-
-// === CURSOR GLOW LEMBUT (BACKGROUND FOLLOWING CURSOR) ===
-let cursorGlow = document.createElement('div');
-cursorGlow.id = 'cursorGlow';
-cursorGlow.style.cssText = `
-    position: fixed;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(244,132,142,0.08), transparent 70%);
-`;
-document.body.appendChild(cursorGlow);
-
-let cursorTimeout;
-document.addEventListener('mousemove', (e) => {
-    cursorGlow.style.left = e.clientX + 'px';
-    cursorGlow.style.top = e.clientY + 'px';
-    cursorGlow.style.opacity = '1';
-    if (isDark) {
-        cursorGlow.style.background = 'radial-gradient(circle, rgba(100,150,255,0.07), transparent 70%)';
-    } else {
-        cursorGlow.style.background = 'radial-gradient(circle, rgba(244,132,142,0.08), transparent 70%)';
-    }
-    clearTimeout(cursorTimeout);
-    cursorTimeout = setTimeout(() => { cursorGlow.style.opacity = '0'; }, 2000);
-});
-
-// === SIDEBAR LINKS: stagger entrance animasi ===
-document.querySelectorAll('.sidebar a').forEach((link, i) => {
-    link.style.opacity = '0';
-    link.style.transform = 'translateX(-30px)';
-    setTimeout(() => {
-        link.style.transition = 'opacity 0.4s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.3s';
-        link.style.opacity = '1';
-        link.style.transform = 'translateX(0)';
-    }, 700 + i * 120);
-});
-
-// === FOOTER LINKS: stagger animasi saat terlihat ===
-const footerEl = document.querySelector('.footer');
-const footerLinks = document.querySelectorAll('.footer-links a');
-const footerObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            footerLinks.forEach((link, i) => {
-                link.style.opacity = '0';
-                link.style.transform = 'translateX(-20px)';
-                setTimeout(() => {
-                    link.style.transition = 'opacity 0.4s ease, transform 0.4s ease, color 0.3s, translateX 0.3s';
-                    link.style.opacity = '0.85';
-                    link.style.transform = 'translateX(0)';
-                }, i * 100);
-            });
-        }
-    });
-}, { threshold: 0.3 });
-if (footerEl) footerObserver.observe(footerEl);
-
-// === SECTION H2 TITLES: tambah animate-in jika belum punya ===
-document.querySelectorAll('section h2:not(.animate-in)').forEach(h2 => {
-    h2.classList.add('animate-in');
-    animateObserver.observe(h2);
-});
-
-// === CONTACT ITEM OPACITY FIX ===
-// Pastikan contact items bisa terlihat jika observer sudah fire
-setTimeout(() => {
-    document.querySelectorAll('.contact-item').forEach(item => {
-        if (!item.closest('.contact-info.visible')) return;
-        item.style.opacity = '1';
-    });
-}, 100);
-
-
-// ============ ANIMASI SUPER HIDUP v2 ============
-
-// === DEV CARD WIDGET (Pengganti video keju - floating di kanan bawah) ===
-(function createDevCard() {
-    const card = document.createElement('div');
-    card.id = 'devCard';
-    card.innerHTML = `
-        <div class="dev-card-inner">
-            <button class="dev-card-close" id="devCardClose" title="Tutup">✕</button>
-            <div class="dev-card-avatar">👩‍💻</div>
-            <div class="dev-card-name">ANIDATUL SIFA</div>
-            <div class="dev-card-role">✦ Web Dev & UI/UX ✦</div>
-            <div class="dev-card-skills">
-                <span class="dev-skill-tag">HTML</span>
-                <span class="dev-skill-tag">CSS</span>
-                <span class="dev-skill-tag">Figma</span>
-            </div>
-            <div class="dev-card-bar"><div class="dev-card-bar-fill html"></div></div>
-            <div class="dev-card-bar"><div class="dev-card-bar-fill css"></div></div>
-            <div class="dev-card-bar"><div class="dev-card-bar-fill ux"></div></div>
-            <div class="dev-card-status">
-                <span class="dev-status-dot"></span>
-                <span>Available for work</span>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(card);
-
-    // Close button
-    document.getElementById('devCardClose').addEventListener('click', (e) => {
-        e.stopPropagation();
-        card.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-        card.style.transform = 'translateX(200px) rotate(10deg)';
-        card.style.opacity = '0';
-        setTimeout(() => card.remove(), 400);
-    });
-
-    // Tilt effect on hover
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) / rect.width * 15;
-        const y = (e.clientY - rect.top - rect.height/2) / rect.height * 15;
-        card.querySelector('.dev-card-inner').style.transform =
-            `translate(-4px,-4px) rotate(-2deg) rotateX(${-y}deg) rotateY(${x}deg)`;
-        card.querySelector('.dev-card-inner').style.transition = 'transform 0.1s ease';
-    });
-    card.addEventListener('mouseleave', () => {
-        card.querySelector('.dev-card-inner').style.transform = '';
-        card.querySelector('.dev-card-inner').style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
-    });
-})();
-
-// === CODE TICKER (running text bawah layar) ===
-(function createCodeTicker() {
-    const ticker = document.createElement('div');
-    ticker.id = 'codeTicker';
-    const items = [
-        '&lt;html&gt; Building dreams with code &lt;/html&gt;',
-        'const passion = "Web Development" + "UI/UX" + "Creativity";',
-        '✦ Anidatul Sifa Portfolio 2026 ✦',
-        'function createBeauty() { return design + code + passion; }',
-        'border-radius: 9999px; /* making things beautiful */',
-        'git commit -m "Added awesome animations 🚀"',
-        'display: flex; align-items: center; justify-content: dreams;',
-        '.sifa { passion: infinite; skills: growing; goal: amazing-developer; }',
-        '&lt;div class="future"&gt; Loading great things... &lt;/div&gt;',
-        'npm install creativity@latest && npm run dream',
-    ];
-    // Duplikat untuk seamless loop
-    const allItems = [...items, ...items];
-    ticker.innerHTML = `<div class="code-ticker-inner">${
-        allItems.map(t => `<span class="ticker-item">${t}</span>`).join('')
-    }</div>`;
-    document.body.appendChild(ticker);
-})();
-
-// === ABOUT PHOTO: MOUSE PARALLAX EFFECT ===
-const aboutPhoto = document.querySelector('.about-photo-frame');
-const aboutPhotoImg = document.querySelector('.about-photo-inner img');
-if (aboutPhoto && aboutPhotoImg) {
-    aboutPhoto.addEventListener('mousemove', (e) => {
-        const rect = aboutPhoto.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) / rect.width;
-        const y = (e.clientY - rect.top - rect.height/2) / rect.height;
-        aboutPhotoImg.style.transform = `scale(1.08) translate(${x * 12}px, ${y * 12}px) rotate(${x}deg)`;
-        aboutPhotoImg.style.transition = 'transform 0.1s ease';
-        aboutPhoto.style.transform = `rotate(${x * 4}deg) scale(1.04)`;
-        aboutPhoto.style.transition = 'transform 0.1s ease';
-    });
-    aboutPhoto.addEventListener('mouseleave', () => {
-        aboutPhotoImg.style.transform = '';
-        aboutPhotoImg.style.transition = 'transform 0.6s ease';
-        aboutPhoto.style.transform = '';
-        aboutPhoto.style.transition = 'transform 0.6s ease';
-    });
-
-    // Click: spin effect
-    aboutPhoto.addEventListener('click', () => {
-        aboutPhotoImg.style.transition = 'transform 0.8s cubic-bezier(0.34,1.56,0.64,1)';
-        aboutPhotoImg.style.transform = 'scale(1.1) rotate(360deg)';
-        setTimeout(() => {
-            aboutPhotoImg.style.transform = '';
-            aboutPhotoImg.style.transition = 'transform 0.6s ease';
-        }, 800);
-    });
-}
-
-// === PROFILE AVATAR: MOUSE PARALLAX ===
-const profileAvatar = document.querySelector('.profile-avatar img');
-const profileSection = document.getElementById('profile');
-if (profileAvatar && profileSection) {
-    profileSection.addEventListener('mousemove', (e) => {
-        const rect = profileSection.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) / rect.width;
-        const y = (e.clientY - rect.top - rect.height/2) / rect.height;
-        profileAvatar.style.transform = `translateY(-18px) translate(${x * 15}px, ${y * 10}px) rotate(${x * 3}deg)`;
-        profileAvatar.style.transition = 'transform 0.15s ease';
-    });
-    profileSection.addEventListener('mouseleave', () => {
-        profileAvatar.style.transform = '';
-        profileAvatar.style.transition = 'transform 0.8s ease';
-    });
-}
-
-// === SKILL BAR: PARTICLE BURST SAAT TERISI ===
-function skillBarBurst(barEl) {
-    const rect = barEl.getBoundingClientRect();
-    const x = rect.right;
-    const y = rect.top + rect.height / 2;
-    for (let i = 0; i < 6; i++) {
-        const p = document.createElement('div');
-        p.style.cssText = `
-            position: fixed;
-            left: ${x}px;
-            top: ${y}px;
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: ${isDark ? '#4488ff' : '#f4848e'};
-            pointer-events: none;
-            z-index: 9999;
-            animation: burstFly 0.6s ease-out forwards;
-        `;
-        const angle = (i / 6) * Math.PI * 2;
-        const dist = 30 + Math.random() * 30;
-        p.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
-        p.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 600);
-    }
-}
-
-// Tambah keyframe burst dinamis
-const burstStyle = document.createElement('style');
-burstStyle.textContent = `
-    @keyframes burstFly {
-        0% { transform: translate(0,0) scale(1); opacity: 1; }
-        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-`;
-document.head.appendChild(burstStyle);
-
-// Override skill bar animasi agar trigger burst
-const origSkillsObserver = skillsAnimated;
-const skillBarsAll = document.querySelectorAll('.skill-bar-fill');
-const burstObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            skillBarsAll.forEach((bar, i) => {
-                setTimeout(() => {
-                    skillBarBurst(bar);
-                }, i * 200 + 1200); // Setelah bar selesai terisi
-            });
-        }
-    });
-}, { threshold: 0.5, once: true });
-const skillsList2 = document.querySelector('.skills-list');
-if (skillsList2) burstObserver.observe(skillsList2);
-
-// === NAVBAR: MAGNETIC BUTTON EFFECT ===
-[document.getElementById('themeToggle'), document.getElementById('closeBtn')].forEach(btn => {
-    if (!btn) return;
-    btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) * 0.4;
-        const y = (e.clientY - rect.top - rect.height/2) * 0.4;
-        btn.style.transform = `translate(${x}px, ${y}px) scale(1.1)`;
-        btn.style.transition = 'transform 0.1s ease';
-    });
-    btn.addEventListener('mouseleave', () => {
-        btn.style.transform = '';
-        btn.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
-    });
-});
-
-// === SIDEBAR: MAGNETIC ICON EFFECT ===
-document.querySelectorAll('.sidebar a').forEach(link => {
-    link.addEventListener('mousemove', (e) => {
-        const rect = link.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) * 0.3;
-        const y = (e.clientY - rect.top - rect.height/2) * 0.3;
-        link.querySelector('svg').style.transform = `translate(${x}px, ${y}px)`;
-    });
-    link.addEventListener('mouseleave', () => {
-        if (link.querySelector('svg')) {
-            link.querySelector('svg').style.transform = '';
-            link.querySelector('svg').style.transition = 'transform 0.4s ease';
-        }
-    });
-});
-
-// === PORTFOLIO CARDS: HOLOGRAPHIC EFFECT ===
-document.querySelectorAll('.portfolio-card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width * 100;
-        const y = (e.clientY - rect.top) / rect.height * 100;
-        card.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.1), transparent 60%)`;
-    });
-    card.addEventListener('mouseleave', () => {
-        card.style.background = '';
-    });
-});
-
-// === CONTACT FORM: FOCUS RIPPLE ===
-document.querySelectorAll('.contact-form input, .contact-form textarea').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.style.transition = 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease';
-        this.style.transform = 'scale(1.02)';
-    });
-    input.addEventListener('blur', function() {
-        this.style.transform = '';
-    });
-});
-
-// === DEV CARD UPDATE SESUAI THEME ===
-themeToggle.addEventListener('click', () => {
-    const ticker = document.getElementById('codeTicker');
-    const devCardInner = document.querySelector('.dev-card-inner');
-    // CSS handles it via body.dark selectors
-});
-
-// === SMOOTH COUNT-UP ANIMASI UNTUK SKILL PERCENT ===
-function animateCount(el, from, to, duration) {
-    const start = performance.now();
-    function update(time) {
-        const progress = Math.min((time - start) / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(from + (to - from) * ease) + '%';
-        if (progress < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-}
-
-const countObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            document.querySelectorAll('.skill-percent').forEach((el, i) => {
-                const target = parseInt(el.textContent);
-                el.textContent = '0%';
-                setTimeout(() => animateCount(el, 0, target, 1200), i * 200 + 200);
-            });
-            countObserver.disconnect();
-        }
-    });
-}, { threshold: 0.5 });
-const skillsListEl = document.querySelector('.skills-list');
-if (skillsListEl) countObserver.observe(skillsListEl);
-
-
-// ================================================================
-//  UPGRADE v3 — LOADING + TYPING NAME + SCROLL EXIT + ICON COLOR
-// ================================================================
-
-// ===== 1. LOADING SCREEN =====
-(function initLoadingScreen() {
-    const name = 'ANIDATUL SIFA';
-    const letters = name.split('').map((ch, i) => {
-        if (ch === ' ') return '<span style="display:inline-block;width:14px"></span>';
-        return `<span style="animation-delay:${0.15 + i * 0.07}s">${ch}</span>`;
-    }).join('');
-
-    // Shapes untuk background loading
-    const shapes = ['◆','▲','●','★','✦','⬡'].map(s => {
-        const el = `<div class="load-shape" style="
-            font-size:${20+Math.random()*30}px;
-            left:${Math.random()*100}%;
-            animation-duration:${5+Math.random()*6}s;
-            animation-delay:${Math.random()*3}s;
-        ">${s}</div>`;
-        return el;
-    }).join('');
-
-    const screen = document.createElement('div');
-    screen.id = 'loadingScreen';
-    screen.innerHTML = `
-        <div class="load-curtain-top"></div>
-        <div class="load-curtain-bot"></div>
-        ${shapes}
-        <div class="load-content">
-            <div class="load-logo">✦</div>
-            <div class="load-name">${letters}</div>
-            <div class="load-bar-wrap"><div class="load-bar-fill"></div></div>
-            <div class="load-sub">Loading Portfolio...</div>
-        </div>
-    `;
-    document.body.prepend(screen);
-
-    // Setelah 2.5s, split curtain keluar
-    setTimeout(() => {
-        screen.classList.add('exit');
-        setTimeout(() => {
-            screen.classList.add('done');
-        }, 1000);
-    }, 2500);
-})();
-
-// ===== 2. TYPING EFFECT NAMA "ANIDATUL SIFA" =====
-(function initTypingName() {
-    const nameEl = document.querySelector('.profile-info h1');
-    if (!nameEl) return;
-
-    const fullText = nameEl.textContent.trim();
-    nameEl.textContent = '';
-    nameEl.style.opacity = '1';
-    nameEl.style.transform = 'none';
-
-    // Tambah cursor
-    const cursor = document.createElement('span');
-    cursor.className = 'typing-cursor';
-    nameEl.appendChild(cursor);
-
-    let i = 0;
-    function typeChar() {
-        if (i < fullText.length) {
-            nameEl.insertBefore(document.createTextNode(fullText[i]), cursor);
-            i++;
-            // Speed: huruf biasa 90ms, spasi 200ms
-            setTimeout(typeChar, fullText[i-1] === ' ' ? 200 : 90);
-        } else {
-            // Setelah selesai, cursor tetap berkedip beberapa saat lalu hilang
-            setTimeout(() => {
-                cursor.style.animation = 'none';
-                cursor.style.opacity = '0';
-                cursor.style.transition = 'opacity 0.5s';
-                setTimeout(() => cursor.remove(), 500);
-            }, 2500);
-        }
-    }
-
-    // Mulai setelah loading selesai
-    setTimeout(typeChar, 3200);
-})();
-
-// ===== 3. SCROLL PROGRESS BAR =====
-(function initScrollBar() {
-    const stripe = document.createElement('div');
-    stripe.id = 'scrollStripe';
-    document.body.appendChild(stripe);
-
-    window.addEventListener('scroll', () => {
-        const scrollTop = window.pageYOffset;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-        stripe.style.transform = `scaleX(${progress})`;
-    }, { passive: true });
-})();
-
-// ===== 4. ABOUT PHOTO EXIT KANAN/KIRI SAAT SCROLL =====
-(function initAboutPhotoScroll() {
-    const frame = document.querySelector('.about-photo-frame');
-    const aboutSec = document.getElementById('about');
-    if (!frame || !aboutSec) return;
-
-    let lastScrollY = window.pageYOffset;
-    let isInAbout = false;
-
-    const obs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                isInAbout = true;
-                frame.classList.remove('exit-right', 'exit-left');
-                frame.classList.add('enter-normal');
-            } else {
-                isInAbout = false;
-                // Tentukan arah scroll
-                const currentY = window.pageYOffset;
-                if (currentY > lastScrollY) {
-                    // Scroll ke bawah — foto pergi ke kanan
-                    frame.classList.remove('enter-normal', 'exit-left');
-                    frame.classList.add('exit-right');
-                } else {
-                    // Scroll ke atas — foto pergi ke kiri
-                    frame.classList.remove('enter-normal', 'exit-right');
-                    frame.classList.add('exit-left');
-                }
-            }
-            lastScrollY = window.pageYOffset;
-        });
-    }, { threshold: 0.15 });
-
-    obs.observe(aboutSec);
-
-    window.addEventListener('scroll', () => {
-        lastScrollY = window.pageYOffset;
-    }, { passive: true });
-})();
-
-// ===== 5. SECTION WIPE LINE EFFECT SAAT ENTER =====
-(function initSectionWipe() {
-    const sections = document.querySelectorAll('section');
-    sections.forEach(sec => sec.classList.add('section-wipe'));
-
-    const wipeObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('wipe-active');
-                setTimeout(() => entry.target.classList.remove('wipe-active'), 900);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    sections.forEach(sec => wipeObs.observe(sec));
-})();
-
-// ===== 6. SIDEBAR ICON: WARNA AKTIF SAAT DIKLIK =====
-(function initActiveNavIcon() {
-    const navLinks = document.querySelectorAll('.sidebar a');
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Hapus active dari semua
-            navLinks.forEach(l => l.classList.remove('active-nav'));
-
-            // Aktifkan yang diklik
-            this.classList.add('active-nav');
-
-            // Ripple effect
-            const ripple = document.createElement('div');
-            ripple.className = 'icon-ripple';
-            ripple.style.left = '50%';
-            ripple.style.top = '50%';
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 500);
-
-            // Setelah 2 detik, hapus warna aktif
-            setTimeout(() => {
-                this.classList.remove('active-nav');
-            }, 2000);
-        });
-    });
-
-    // Auto-detect section aktif saat scroll
-    const sections = ['profile','about','skills','portfolio','contact'];
-    const sectionEls = sections.map(id => document.getElementById(id)).filter(Boolean);
-
-    const activeObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-                navLinks.forEach(link => {
-                    link.classList.remove('active-nav');
-                    if (link.getAttribute('href') === '#' + id) {
-                        link.classList.add('active-nav');
-                    }
-                });
-            }
-        });
-    }, { threshold: 0.5 });
-
-    sectionEls.forEach(sec => activeObs.observe(sec));
-})();
-
-// ===== 7. SCROLL VIDEO STYLE: HORIZONTAL STRIP PARALLAX =====
-(function initVideoScrollEffect() {
-    // Elemen yang mendapat efek parallax horizontal saat scroll
-    const profileInfo = document.querySelector('.profile-info');
-    const profileAvImg = document.querySelector('.profile-avatar');
-    const aboutText = document.querySelector('.about-text');
-    const skillsH2 = document.querySelector('.skills-section h2');
-    const portH2 = document.querySelector('.portfolio-section h2');
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-            const sy = window.pageYOffset;
-
-            // Profile section parallax — info geser kiri, avatar geser kanan
-            if (profileInfo) {
-                const rect = profileInfo.closest('section')?.getBoundingClientRect();
-                if (rect && rect.bottom > 0 && rect.top < window.innerHeight) {
-                    const progress = -rect.top / window.innerHeight;
-                    profileInfo.style.transform = `translateX(${progress * -30}px)`;
-                    if (profileAvImg) profileAvImg.style.transform = `translateX(${progress * 30}px)`;
-                }
-            }
-
-            // About text: slight slide
-            if (aboutText) {
-                const rect = aboutText.getBoundingClientRect();
-                if (rect.bottom > 0 && rect.top < window.innerHeight) {
-                    const p = (window.innerHeight / 2 - rect.top - rect.height / 2) / window.innerHeight;
-                    aboutText.style.transform = `translateX(${p * 20}px)`;
-                }
-            }
-
-            // Skills h2 scale
-            if (skillsH2) {
-                const rect = skillsH2.getBoundingClientRect();
-                if (rect.bottom > 0 && rect.top < window.innerHeight) {
-                    const p = 1 - Math.abs(rect.top + rect.height/2 - window.innerHeight/2) / window.innerHeight;
-                    skillsH2.style.transform = `scale(${0.9 + p * 0.15}) translateY(${(1-p)*20}px)`;
-                }
-            }
-
-            ticking = false;
-        });
-    }, { passive: true });
-})();
-
-// ===== 8. STAGGER REVEAL UNTUK CONTACT ITEMS =====
-(function initStaggerContactItems() {
-    const contactInner = document.querySelector('.contact-inner');
-    if (contactInner) {
-        contactInner.classList.add('stagger-reveal');
-        const staggerObs = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                }
-            });
-        }, { threshold: 0.2 });
-        staggerObs.observe(contactInner);
-    }
-})();
-
-// ===== 9. SKILLS LIST: ENSURE VISIBLE CLASS TRIGGERS SLIDE =====
-// Patch ulang skillsObserver agar juga trigger robot visible
-const skillsListForPatch = document.querySelector('.skills-list');
-if (skillsListForPatch) {
-    const patchObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                // Robot dari kanan
-                const robot = document.getElementById('robotWrapper');
-                if (robot) {
-                    setTimeout(() => robot.classList.add('visible'), 300);
-                }
-            }
-        });
-    }, { threshold: 0.2 });
-    patchObs.observe(skillsListForPatch);
-}
-
-// ===== 10. HOVER GLOW TRAIL PADA SIDEBAR ICONS =====
-document.querySelectorAll('.sidebar a').forEach(link => {
-    link.addEventListener('mouseenter', function() {
-        this.style.boxShadow = isDark
-            ? '0 0 20px rgba(68,136,255,0.6)'
-            : '0 0 15px rgba(244,132,142,0.5)';
-    });
-    link.addEventListener('mouseleave', function() {
-        if (!this.classList.contains('active-nav')) {
-            this.style.boxShadow = '';
-        }
-    });
-});
-
-
-// ================================================================
-//  UPGRADE v4 — CINEMATIC LOADING + SKILL BAR EXIT KE KANAN
-// ================================================================
-
-// ===== REMOVE OLD LOADING SCREEN (dari v3 jika ada) =====
-(function removeOldLoader() {
-    const old = document.getElementById('loadingScreen');
-    if (old) old.remove();
-})();
-
-// ===== NEW CINEMATIC LOADING SCREEN v4 =====
-(function createCinematicLoader() {
-    const name = 'ANIDATUL SIFA';
-
-    // BG shapes
-    const shapeDefs = [
-        { color:'rgba(244,132,142,0.15)', size:300, tx:'40px', ty:'-60px', dur:'6s', top:'5%', left:'5%' },
-        { color:'rgba(192,132,212,0.12)', size:250, tx:'-50px', ty:'40px', dur:'8s', top:'60%', right:'5%' },
-        { color:'rgba(126,200,200,0.1)',  size:200, tx:'30px', ty:'50px', dur:'7s', bottom:'10%', left:'30%' },
-        { color:'rgba(255,221,87,0.1)',   size:180, tx:'-30px', ty:'-40px', dur:'5s', top:'30%', right:'20%' },
-    ];
-    const shapesHTML = shapeDefs.map(s => {
-        const pos = Object.entries(s).filter(([k])=>['top','left','right','bottom'].includes(k)).map(([k,v])=>`${k}:${v}`).join(';');
-        return `<div class="ls-bg-shape" style="width:${s.size}px;height:${s.size}px;background:${s.color};${pos};--tx:${s.tx};--ty:${s.ty};animation-duration:${s.dur}"></div>`;
-    }).join('');
-
-    // Name letters HTML — stagger per huruf
-    let delay = 0.6;
-    const lettersHTML = name.split('').map(ch => {
-        if (ch === ' ') {
-            const el = `<span class="ls-letter space"></span>`;
-            delay += 0.04;
-            return el;
-        }
-        const el = `<span class="ls-letter" style="animation-delay:${delay.toFixed(2)}s;color:hsl(${Math.random()*60+330},80%,80%)">${ch}</span>`;
-        delay += 0.08;
-        return el;
-    }).join('');
-
-    const screen = document.createElement('div');
-    screen.id = 'loadingScreen';
-    screen.innerHTML = `
-        <div class="ls-panel ls-panel-tl"></div>
-        <div class="ls-panel ls-panel-tr"></div>
-        <div class="ls-panel ls-panel-bl"></div>
-        <div class="ls-panel ls-panel-br"></div>
-        ${shapesHTML}
-        <div class="ls-center">
-            <div class="ls-ring"><div class="ls-emoji">✦</div></div>
-            <div class="ls-name">${lettersHTML}</div>
-            <div class="ls-tagline">Web Developer &amp; UI/UX Designer</div>
-            <div class="ls-progress"><div class="ls-progress-fill" id="lsProgressFill"></div></div>
-            <div class="ls-percent" id="lsPercent">0%</div>
-        </div>
-    `;
-    document.body.prepend(screen);
-
-    // Animasi persentase count-up
-    let pct = 0;
-    const pctEl = document.getElementById('lsPercent');
-    const pctTimer = setInterval(() => {
-        pct = Math.min(pct + Math.random() * 4 + 1, 100);
-        if (pctEl) pctEl.textContent = Math.floor(pct) + '%';
-        if (pct >= 100) {
-            if (pctEl) pctEl.textContent = '100%';
-            clearInterval(pctTimer);
-        }
-    }, 60);
-
-    // Exit: panel berpencar ke 4 sudut
-    const exitDelay = 2800;
-    setTimeout(() => {
-        screen.classList.add('ls-exit');
-        // Fade center content
-        const center = screen.querySelector('.ls-center');
-        if (center) {
-            center.style.transition = 'opacity 0.3s ease';
-            center.style.opacity = '0';
-        }
-        // Hapus setelah animasi selesai
-        setTimeout(() => {
-            screen.classList.add('ls-done');
-        }, 1200);
-    }, exitDelay);
-})();
-
-// ===== TYPING NAME: MULAI SETELAH LOADING =====
-(function reinitTypingName() {
-    // Hapus typing lama jika ada (dari v3)
-    const existingCursor = document.querySelector('.typing-cursor');
-    if (existingCursor) existingCursor.remove();
-
-    const nameEl = document.querySelector('.profile-info h1');
-    if (!nameEl) return;
-
-    const fullText = nameEl.textContent.trim();
-    nameEl.textContent = '';
-
-    const cursor = document.createElement('span');
-    cursor.className = 'typing-cursor';
-    nameEl.appendChild(cursor);
-
-    let i = 0;
-    function type() {
-        if (i < fullText.length) {
-            nameEl.insertBefore(document.createTextNode(fullText[i]), cursor);
-            i++;
-            const delay = fullText[i-1] === ' ' ? 180 : (Math.random() * 60 + 60);
-            setTimeout(type, delay);
-        } else {
-            // Selesai typing: cursor berkedip 3 detik lalu fade out
-            setTimeout(() => {
-                cursor.style.transition = 'opacity 0.8s';
-                cursor.style.opacity = '0';
-                setTimeout(() => cursor.remove(), 800);
-            }, 3000);
-        }
-    }
-
-    // Start setelah loading exit (3.8s)
-    setTimeout(type, 3900);
-})();
-
-// ===== SKILL BAR EXIT KE KANAN SAAT SCROLL MELEWATI SKILLS =====
-(function initSkillBarExit() {
-    const skillsSec = document.querySelector('.skills-section');
-    if (!skillsSec) return;
-
-    let skillsVisible = false;
-    let skillsWasVisible = false;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                skillsVisible = true;
-                skillsWasVisible = true;
-                skillsSec.classList.remove('skill-exit');
-            } else if (skillsWasVisible && !entry.isIntersecting) {
-                skillsVisible = false;
-                // Tentukan: sedang scroll ke bawah (melewati skills) → exit
-                const scrollDir = window.pageYOffset > (skillsSec._lastScrollY || 0);
-                if (scrollDir) {
-                    // Scroll ke bawah melewati skills → bar berjalan ke kanan
-                    skillsSec.classList.add('skill-exit');
-                } else {
-                    skillsSec.classList.remove('skill-exit');
-                }
-            }
-            skillsSec._lastScrollY = window.pageYOffset;
-        });
-    }, { threshold: 0.05 });
-
-    observer.observe(skillsSec);
-
-    // Track scroll direction
-    window.addEventListener('scroll', () => {
-        skillsSec._lastScrollY = window.pageYOffset;
-    }, { passive: true });
-})();
-
-// ===== SCROLL PROGRESS BAR (rainbow) =====
-(function ensureScrollBar() {
-    let stripe = document.getElementById('scrollStripe');
-    if (!stripe) {
-        stripe = document.createElement('div');
-        stripe.id = 'scrollStripe';
-        document.body.appendChild(stripe);
-    }
-    window.addEventListener('scroll', () => {
-        const scrollTop = window.pageYOffset;
-        const docH = document.documentElement.scrollHeight - window.innerHeight;
-        stripe.style.transform = `scaleX(${docH > 0 ? scrollTop/docH : 0})`;
-    }, { passive: true });
-})();
-
-// ===== CINEMATIC PARALLAX: PROFILE SECTION =====
-(function initCinematicParallax() {
-    const profileSec = document.getElementById('profile');
-    const profileInfo = document.querySelector('.profile-info');
-    const profileAv = document.querySelector('.profile-avatar');
-    const decors = document.querySelectorAll('.profile-decor');
-
-    window.addEventListener('scroll', () => {
-        if (!profileSec) return;
-        const rect = profileSec.getBoundingClientRect();
-        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-        const progress = -rect.top / rect.height; // 0 → 1 saat scroll melewati section
-        const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-        const p = clamp(progress, 0, 1);
-
-        // Info geser ke kiri saat scroll
-        if (profileInfo) {
-            profileInfo.style.transform = `translateX(${p * -50}px) translateY(${p * -20}px)`;
-            profileInfo.style.opacity = `${1 - p * 0.4}`;
-        }
-        // Avatar geser ke kanan
-        if (profileAv) {
-            profileAv.style.transform = `translateX(${p * 40}px) translateY(${p * -15}px) scale(${1 - p * 0.1})`;
-            profileAv.style.opacity = `${1 - p * 0.3}`;
-        }
-        // Decors berputar
-        decors.forEach((d, i) => {
-            d.style.transform = `rotate(${p * (i%2===0?180:-120)}deg) scale(${1 + p * 0.2})`;
-        });
-    }, { passive: true });
-})();
-
-// ===== ABOUT SECTION: EXTRA CINEMATIC =====
-(function initAboutCinematic() {
-    const aboutInner = document.querySelector('.about-inner');
-    const aboutPhoto = document.querySelector('.about-photo-frame');
-    const aboutText = document.querySelector('.about-text');
-    const aboutSec = document.getElementById('about');
-
-    window.addEventListener('scroll', () => {
-        if (!aboutSec) return;
-        const rect = aboutSec.getBoundingClientRect();
-        if (rect.bottom < -100 || rect.top > window.innerHeight + 100) return;
-
-        // Center of section relative to viewport
-        const centerRel = (rect.top + rect.height/2 - window.innerHeight/2) / window.innerHeight;
-        const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-        const p = clamp(centerRel, -1, 1);
-
-        if (aboutText) {
-            aboutText.style.transform = `translateX(${p * -25}px)`;
-        }
-    }, { passive: true });
-})();
-
-// ===== SKILLS SECTION: COUNTER & ENTRANCE REDO (setelah loading) =====
-(function reinitSkillsAfterLoad() {
-    const skillsList = document.querySelector('.skills-list');
-    const skillBars = document.querySelectorAll('.skill-bar-fill');
+// ============ SKILL BARS: ANIMATED FILL + COUNT-UP ============
+// Fills skill bars and counts percentage when section enters viewport
+(function initSkillBars() {
+    const skillsList   = document.querySelector('.skills-list');
+    const skillBars    = document.querySelectorAll('.skill-bar-fill');
     const skillPercents = document.querySelectorAll('.skill-percent');
     let animated = false;
 
@@ -1381,16 +224,16 @@ document.querySelectorAll('.sidebar a').forEach(link => {
             if (entry.isIntersecting && !animated) {
                 animated = true;
 
-                // Bars terisi
+                // Animate bar width with stagger
                 skillBars.forEach((bar, i) => {
                     setTimeout(() => {
                         bar.style.width = bar.dataset.width + '%';
                     }, i * 180 + 200);
                 });
 
-                // Percent count-up
+                // Animated count-up for percentage numbers
                 skillPercents.forEach((el, i) => {
-                    const target = parseInt(el.dataset ? el.dataset.pct : el.textContent) || parseInt(el.textContent);
+                    const target = parseInt(el.dataset.pct) || 0;
                     el.textContent = '0%';
                     setTimeout(() => {
                         let cur = 0;
@@ -1403,14 +246,14 @@ document.querySelectorAll('.sidebar a').forEach(link => {
                     }, i * 180 + 300);
                 });
 
-                // Skill items stagger
+                // Staggered slide-in for each skill row
                 document.querySelectorAll('.skill-item').forEach((item, i) => {
-                    item.style.opacity = '0';
+                    item.style.opacity   = '0';
                     item.style.transform = 'translateX(-50px)';
                     setTimeout(() => {
                         item.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
-                        item.style.opacity = '1';
-                        item.style.transform = 'translateX(0)';
+                        item.style.opacity    = '1';
+                        item.style.transform  = 'translateX(0)';
                     }, i * 150 + 100);
                 });
             }
@@ -1420,3 +263,760 @@ document.querySelectorAll('.sidebar a').forEach(link => {
     if (skillsList) obs.observe(skillsList);
 })();
 
+
+// ============ SKILL BAR EXIT ANIMATION ============
+// Bars retract to the right when user scrolls past skills section
+(function initSkillBarExit() {
+    const skillsSec = document.querySelector('.skills-section');
+    if (!skillsSec) return;
+
+    let skillsWasVisible = false;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                skillsWasVisible = true;
+                skillsSec.classList.remove('skill-exit');
+            } else if (skillsWasVisible && !entry.isIntersecting) {
+                // Only exit if scrolling downward past the section
+                const scrollDir = window.pageYOffset > (skillsSec._lastScrollY || 0);
+                if (scrollDir) {
+                    skillsSec.classList.add('skill-exit');
+                } else {
+                    skillsSec.classList.remove('skill-exit');
+                }
+            }
+            skillsSec._lastScrollY = window.pageYOffset;
+        });
+    }, { threshold: 0.05 });
+
+    observer.observe(skillsSec);
+
+    window.addEventListener('scroll', () => {
+        skillsSec._lastScrollY = window.pageYOffset;
+    }, { passive: true });
+})();
+
+// ============ PORTFOLIO CAROUSEL ============
+const carousel = document.getElementById('portfolioCarousel');
+const prevBtn  = document.getElementById('prevBtn');
+const nextBtn  = document.getElementById('nextBtn');
+const cards    = carousel ? carousel.querySelectorAll('.portfolio-card') : [];
+
+// Highlight the card closest to the center of the carousel
+function updateCarouselFocus() {
+    if (!carousel || cards.length === 0) return;
+    const carouselRect = carousel.getBoundingClientRect();
+    const centerX      = carouselRect.left + carouselRect.width / 2;
+    cards.forEach(card => {
+        card.classList.remove('center', 'near');
+        const rect       = card.getBoundingClientRect();
+        const cardCenter = rect.left + rect.width / 2;
+        const distance   = Math.abs(centerX - cardCenter);
+        if      (distance < 120) card.classList.add('center');
+        else if (distance < 240) card.classList.add('near');
+    });
+}
+
+if (prevBtn) prevBtn.addEventListener('click', () => { carousel.scrollBy({ left: -250, behavior: 'smooth' }); });
+if (nextBtn) nextBtn.addEventListener('click', () => { carousel.scrollBy({ left:  250, behavior: 'smooth' }); });
+
+if (carousel) {
+    carousel.addEventListener('scroll', updateCarouselFocus);
+    window.addEventListener('resize', updateCarouselFocus);
+    setTimeout(updateCarouselFocus, 300);
+}
+
+// ============ SCROLL PROGRESS BAR ============
+// Thin rainbow bar at top of screen indicating scroll depth
+(function initScrollBar() {
+    let stripe = document.getElementById('scrollStripe');
+    if (!stripe) {
+        stripe = document.createElement('div');
+        stripe.id = 'scrollStripe';
+        document.body.appendChild(stripe);
+    }
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset;
+        const docH      = document.documentElement.scrollHeight - window.innerHeight;
+        stripe.style.transform = `scaleX(${docH > 0 ? scrollTop / docH : 0})`;
+    }, { passive: true });
+})();
+
+// ============ PARTICLES ============
+// Floating ambient particles (light mode: pink, dark mode: blue)
+const particlesContainer = document.getElementById('particles');
+
+function createParticles() {
+    particlesContainer.innerHTML = '';
+    const count = window.innerWidth < 900 ? 18 : 35;
+    for (let i = 0; i < count; i++) {
+        const p    = document.createElement('div');
+        p.classList.add('particle');
+        const size = Math.random() * 6 + 3;
+        p.style.width  = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left   = Math.random() * 100 + '%';
+        p.style.background = isDark
+            ? `rgba(${Math.round(80 + Math.random()*50)}, ${Math.round(120 + Math.random()*60)}, 255, 0.3)`
+            : `rgba(244, ${Math.round(100 + Math.random()*50)}, 142, 0.22)`;
+        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        p.style.animationDelay   = (Math.random() * 8)       + 's';
+        particlesContainer.appendChild(p);
+    }
+}
+createParticles();
+
+// ============ CODE SYMBOLS (DARK MODE MATRIX EFFECT) ============
+// Floating code chars fall from the top like a matrix rain in dark mode
+function createCodeSymbols() {
+    // Remove old symbols
+    document.querySelectorAll('.code-symbol').forEach(s => s.remove());
+    if (!isDark) return;
+
+    const symbols = ['</', '{}', '=>', '&&', '||', '()', '[]', '/*', '*/', '++', '--',
+                     'fn', 'var', 'let', 'if', '!=', '==', '>>', '<<', '::'];
+    const count   = window.innerWidth < 900 ? 8 : 16;
+
+    for (let i = 0; i < count; i++) {
+        const sym     = document.createElement('div');
+        sym.className = 'code-symbol';
+        sym.textContent        = symbols[Math.floor(Math.random() * symbols.length)];
+        sym.style.left         = Math.random() * 100 + 'vw';
+        sym.style.top          = (Math.random() * -50) + 'vh';
+        sym.style.animationDuration  = (Math.random() * 8 + 4) + 's';
+        sym.style.animationDelay     = (Math.random() * 6)     + 's';
+        sym.style.fontSize           = (Math.random() * 8 + 10) + 'px';
+        sym.style.opacity            = (Math.random() * 0.4 + 0.3).toString();
+        document.body.appendChild(sym);
+    }
+}
+createCodeSymbols();
+
+
+// ============ TERMINAL DECORATION ============
+// Adds terminal-style corner decorations in dark mode
+function addTerminalDecoration() {
+    document.querySelectorAll('.terminal-corner').forEach(el => el.remove());
+    if (!isDark) return;
+
+    ['top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(pos => {
+        const corner = document.createElement('div');
+        corner.className = 'terminal-corner ' + pos;
+        document.body.appendChild(corner);
+    });
+}
+
+
+// ============ CINEMATIC PROFILE PARALLAX ============
+// Profile info slides slightly as user scrolls away from hero section
+(function initProfileParallax() {
+    const profileSec  = document.getElementById('profile');
+    const profileInfo = document.querySelector('.profile-info');
+    const profileAv   = document.querySelector('.profile-avatar');
+    const decors      = document.querySelectorAll('.profile-decor');
+
+    window.addEventListener('scroll', () => {
+        if (!profileSec) return;
+        const rect = profileSec.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
+        // p: 0 when section top = viewport top, 1 when section has scrolled away
+        const progress = -rect.top / rect.height;
+        const p = Math.max(0, Math.min(1, progress));
+
+        if (profileInfo) {
+            profileInfo.style.transform = `translateX(${p * -50}px) translateY(${p * -20}px)`;
+            profileInfo.style.opacity   = `${1 - p * 0.4}`;
+        }
+        if (profileAv) {
+            profileAv.style.transform = `translateX(${p * 40}px) translateY(${p * -15}px) scale(${1 - p * 0.1})`;
+            profileAv.style.opacity   = `${1 - p * 0.3}`;
+        }
+        // Background decors rotate as you scroll
+        decors.forEach((d, i) => {
+            d.style.transform = `rotate(${p * (i % 2 === 0 ? 180 : -120)}deg) scale(${1 + p * 0.2})`;
+        });
+    }, { passive: true });
+})();
+
+
+// ============ CINEMATIC ABOUT: FOTO NYERET DARI KIRI ============
+// Foto awalnya tersembunyi jauh di kiri layar.
+// Saat About section muncul di viewport → foto "nyeret" masuk dari kiri.
+// Saat scroll melewati section → foto perlahan geser ke kanan dan menghilang.
+(function initAboutCinematicSlide() {
+    const aboutSec   = document.getElementById('about');
+    const aboutPhoto = document.querySelector('.about-photo-frame');
+    const aboutText  = document.querySelector('.about-text');
+    if (!aboutSec || !aboutPhoto) return;
+
+    // Set initial state: foto tersembunyi di kiri, teks tersembunyi di kanan
+    aboutPhoto.style.opacity   = '0';
+    aboutPhoto.style.transform = 'translateX(-160px)';
+    aboutPhoto.style.transition = 'none'; // dikendalikan JS, bukan CSS transition
+
+    if (aboutText) {
+        aboutText.style.opacity   = '0';
+        aboutText.style.transform = 'translateX(80px)';
+        aboutText.style.transition = 'none';
+    }
+
+    // Clamp helper
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+    window.addEventListener('scroll', () => {
+        const rect = aboutSec.getBoundingClientRect();
+        const vh   = window.innerHeight;
+
+        // ── FASE 1: MASUK ──
+        // Saat section mulai muncul dari bawah (rect.top = vh) sampai tengah layar
+        // enterProgress: 0 = section baru kelihatan, 1 = section di tengah viewport
+        const enterProgress = clamp(1 - rect.top / (vh * 0.75), 0, 1);
+
+        // ── FASE 2: KELUAR ──
+        // Saat section mulai keluar ke atas (rect.top negatif)
+        // exitProgress: 0 = section masih di tengah, 1 = section sudah habis
+        const exitProgress  = clamp(-rect.top / (rect.height * 0.6), 0, 1);
+
+        // Gabungkan: masuk dulu, lalu keluar
+        if (exitProgress > 0) {
+            // Foto geser ke kanan dan fade out saat scroll ke bawah
+            const ex = exitProgress;
+            aboutPhoto.style.opacity   = `${1 - ex}`;
+            aboutPhoto.style.transform = `translateX(${ex * 120}px) scale(${1 - ex * 0.05})`;
+
+            if (aboutText) {
+                aboutText.style.opacity   = `${1 - ex * 0.8}`;
+                aboutText.style.transform = `translateX(${ex * -40}px)`;
+            }
+        } else {
+            // Foto nyeret masuk dari kiri, easing smooth
+            const ep = enterProgress;
+            // Easing: cubic ease-out secara manual lewat formula
+            const eased = 1 - Math.pow(1 - ep, 3);
+
+            aboutPhoto.style.opacity   = `${eased}`;
+            aboutPhoto.style.transform = `translateX(${(1 - eased) * -160}px) scale(${0.92 + eased * 0.08})`;
+
+            if (aboutText) {
+                // Teks muncul sedikit terlambat (delay 0.15 faktor)
+                const textEp    = clamp((ep - 0.15) / 0.85, 0, 1);
+                const textEased = 1 - Math.pow(1 - textEp, 3);
+                aboutText.style.opacity   = `${textEased}`;
+                aboutText.style.transform = `translateX(${(1 - textEased) * 80}px)`;
+            }
+        }
+    }, { passive: true });
+
+    // Trigger scroll satu kali agar langsung terhitung posisi awal
+    window.dispatchEvent(new Event('scroll'));
+})();
+
+// ============ CONTACT FORM SUBMISSION ============
+// Alert confirmation when submit button is clicked
+function handleSubmit(btn) {
+    const originalText   = btn.textContent;
+    btn.textContent      = '✓ Sent!';
+    btn.style.background = '#22c55e';
+    btn.style.color      = '#fff';
+    btn.style.borderColor = '#22c55e';
+    setTimeout(() => {
+        btn.textContent      = originalText;
+        btn.style.background = '';
+        btn.style.color      = '';
+        btn.style.borderColor = '';
+    }, 2500);
+}
+
+// ============ TYPING EFFECT ON NAME ============
+// Typewriter effect on profile h1 after loading screen exits
+(function initTypingName() {
+    const nameEl = document.querySelector('.profile-info h1');
+    if (!nameEl) return;
+
+    const fullText = nameEl.textContent.trim();
+    nameEl.textContent = '';
+
+    // Create blinking cursor
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    cursor.style.cssText = `
+        display: inline-block; width: 3px; height: 1em;
+        background: currentColor; margin-left: 2px;
+        vertical-align: text-bottom;
+        animation: cursorBlink 0.8s step-end infinite;
+    `;
+    nameEl.appendChild(cursor);
+
+    // Inject cursor blink keyframes once
+    if (!document.getElementById('cursorBlinkStyle')) {
+        const style = document.createElement('style');
+        style.id = 'cursorBlinkStyle';
+        style.textContent = '@keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }';
+        document.head.appendChild(style);
+    }
+
+    let i = 0;
+    function type() {
+        if (i < fullText.length) {
+            nameEl.insertBefore(document.createTextNode(fullText[i]), cursor);
+            i++;
+            const delay = fullText[i - 1] === ' ' ? 180 : (Math.random() * 60 + 60);
+            setTimeout(type, delay);
+        } else {
+            // Cursor blinks for 3 seconds then fades out
+            setTimeout(() => {
+                cursor.style.transition = 'opacity 0.8s';
+                cursor.style.opacity    = '0';
+                setTimeout(() => cursor.remove(), 800);
+            }, 3000);
+        }
+    }
+
+    // Start typing after loading screen exits (~3.8s total)
+    setTimeout(type, 3900);
+})();
+
+
+// ============ SECTION ENTRANCE GLOW LINES ============
+// Adds a color flash on section headings when they enter viewport
+(function initHeadingGlow() {
+    const headings = document.querySelectorAll('.portfolio-section h2, .skills-section h2');
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.transition = 'all 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+                entry.target.style.transform  = 'translate(-4px, -4px)';
+                setTimeout(() => {
+                    entry.target.style.transform = 'translate(0, 0)';
+                }, 500);
+            }
+        });
+    }, { threshold: 0.5 });
+    headings.forEach(h => obs.observe(h));
+})();
+
+
+// ============ FOOTER SOCIAL ICONS STAGGER ============
+// Social icons bounce in when footer enters viewport
+(function initFooterAnimation() {
+    const footer       = document.querySelector('.footer');
+    const socialLinks  = document.querySelectorAll('.social-links a');
+    const footerLinks  = document.querySelectorAll('.footer-links a');
+    let   footerAnimated = false;
+
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !footerAnimated) {
+                footerAnimated = true;
+
+                // Social icons bounce in with stagger
+                socialLinks.forEach((link, i) => {
+                    link.style.opacity   = '0';
+                    link.style.transform = 'translateY(20px) scale(0.8)';
+                    setTimeout(() => {
+                        link.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+                        link.style.opacity    = '1';
+                        link.style.transform  = 'translateY(0) scale(1)';
+                    }, i * 120 + 200);
+                });
+
+                // Footer nav links fade in
+                footerLinks.forEach((link, i) => {
+                    link.style.opacity   = '0';
+                    link.style.transform = 'translateX(-15px)';
+                    setTimeout(() => {
+                        link.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        link.style.opacity    = '0.85';
+                        link.style.transform  = 'translateX(0)';
+                    }, i * 80 + 100);
+                });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    if (footer) obs.observe(footer);
+})();
+
+
+// ============ CONTACT SECTION ITEMS STAGGER ============
+// Contact info cards slide in one by one
+(function initContactAnimation() {
+    const contactItems = document.querySelectorAll('.contact-item');
+    let   contactAnimated = false;
+
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !contactAnimated) {
+                contactAnimated = true;
+                contactItems.forEach((item, i) => {
+                    item.style.opacity   = '0';
+                    item.style.transform = 'translateX(-40px)';
+                    setTimeout(() => {
+                        item.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+                        item.style.opacity    = '1';
+                        item.style.transform  = 'translateX(0)';
+                    }, i * 150 + 100);
+                });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    const contactInfo = document.querySelector('.contact-info');
+    if (contactInfo) obs.observe(contactInfo);
+})();
+
+
+// ============ ROBOT SPLINE: CLICK BOUNCE ============
+// Robot does a fun movement animation on click
+const robotWrapper = document.getElementById('robotWrapper');
+if (robotWrapper) {
+    robotWrapper.addEventListener('click', () => {
+        robotWrapper.classList.add('moving');
+        setTimeout(() => robotWrapper.classList.remove('moving'), 2000);
+    });
+}
+
+
+// ============ PORTFOLIO CARDS: HOVER RIPPLE ============
+// Adds a ripple at click position on portfolio cards
+document.querySelectorAll('.portfolio-card').forEach(card => {
+    card.addEventListener('mousedown', function(e) {
+        const rect   = this.getBoundingClientRect();
+        const ripple = document.createElement('div');
+        ripple.style.cssText = `
+            position: absolute;
+            width: 80px; height: 80px;
+            left: ${e.clientX - rect.left - 40}px;
+            top:  ${e.clientY - rect.top  - 40}px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+            z-index: 100;
+        `;
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+});
+
+
+// ============ WINDOW RESIZE: REFRESH PARTICLES ============
+window.addEventListener('resize', () => {
+    createParticles();
+}, { passive: true });
+
+
+
+// ============ [FEATURE 1] CURSOR TRAIL / EKOR CURSOR ============
+// Canvas-based glowing trail yang smooth dan elegan di belakang cursor
+(function initCursorTrail() {
+    const canvas = document.getElementById('cursorTrailCanvas');
+    if (!canvas) return;
+
+    // Sembunyikan di mobile
+    if (window.innerWidth <= 768) return;
+
+    const ctx = canvas.getContext('2d');
+
+    // Resize canvas mengikuti window
+    function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    // Array titik-titik ekor (trail points)
+    const trailPoints = [];
+    const TRAIL_LENGTH = 22;   // jumlah titik ekor
+    const TRAIL_MAX_R  = 7;    // radius titik terbesar (pangkal)
+    const TRAIL_MIN_R  = 0.5;  // radius titik terkecil (ujung)
+
+    // Posisi mouse raw
+    let rawX = window.innerWidth / 2;
+    let rawY = window.innerHeight / 2;
+
+    // Inisialisasi semua titik di tengah
+    for (let i = 0; i < TRAIL_LENGTH; i++) {
+        trailPoints.push({ x: rawX, y: rawY });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        rawX = e.clientX;
+        rawY = e.clientY;
+    });
+
+    // Helper: ambil warna glow sesuai mode
+    function getGlowColor(alpha) {
+        const dark = document.body.classList.contains('dark');
+        if (dark) return `rgba(102, 153, 255, ${alpha})`;
+        return `rgba(244, 100, 130, ${alpha})`;
+    }
+
+    function animateTrail() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update posisi: setiap titik mengikuti titik sebelumnya dengan lag
+        for (let i = TRAIL_LENGTH - 1; i > 0; i--) {
+            const factor = 0.28 + i * 0.012; // titik belakang lebih lambat
+            trailPoints[i].x += (trailPoints[i - 1].x - trailPoints[i].x) * factor;
+            trailPoints[i].y += (trailPoints[i - 1].y - trailPoints[i].y) * factor;
+        }
+        // Titik pertama langsung mengikuti mouse
+        trailPoints[0].x += (rawX - trailPoints[0].x) * 0.35;
+        trailPoints[0].y += (rawY - trailPoints[0].y) * 0.35;
+
+        // Gambar setiap titik sebagai lingkaran blur + glow
+        for (let i = 0; i < TRAIL_LENGTH; i++) {
+            // Semakin ke belakang → semakin kecil & transparan
+            const progress = 1 - i / TRAIL_LENGTH;        // 1 di depan, 0 di belakang
+            const eased    = Math.pow(progress, 1.8);     // easing: lebih cepat fade di belakang
+
+            const radius  = TRAIL_MIN_R + (TRAIL_MAX_R - TRAIL_MIN_R) * eased;
+            const alpha   = eased * 0.55;
+            const glowR   = radius * 2.5;
+            const glowAlpha = eased * 0.18;
+
+            const pt = trailPoints[i];
+
+            // Glow luar (soft blur circle)
+            const glowGrad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, glowR);
+            glowGrad.addColorStop(0,   getGlowColor(glowAlpha));
+            glowGrad.addColorStop(1,   getGlowColor(0));
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, glowR, 0, Math.PI * 2);
+            ctx.fillStyle = glowGrad;
+            ctx.fill();
+
+            // Core titik
+            const coreGrad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, radius);
+            coreGrad.addColorStop(0, getGlowColor(alpha));
+            coreGrad.addColorStop(1, getGlowColor(0));
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = coreGrad;
+            ctx.fill();
+        }
+
+        requestAnimationFrame(animateTrail);
+    }
+
+    animateTrail();
+})();
+
+
+// ============ [FEATURE 2] NAVIGATION ACTIVE INDICATOR ============
+// Bulatan glow yang pindah mengikuti section yang sedang aktif di viewport
+(function initNavActiveIndicator() {
+    const sidebar   = document.getElementById('sidebar');
+    const indicator = document.getElementById('navActiveIndicator');
+    if (!sidebar || !indicator) return;
+
+    // Map: section id → sidebar link
+    const sectionIds = ['profile', 'about', 'skills', 'portfolio', 'contact'];
+    const navLinks   = sidebar.querySelectorAll('a');
+
+    // Peta index link per section
+    const sectionLinkMap = {};
+    sectionIds.forEach((id, i) => {
+        if (navLinks[i]) sectionLinkMap[id] = navLinks[i];
+    });
+
+    let currentActive = null;
+
+    // Pindahkan indicator ke posisi link tertentu
+    function moveIndicatorTo(link) {
+        if (!link || link === currentActive) return;
+        currentActive = link;
+
+        // Hapus class aktif dari semua link
+        navLinks.forEach(l => l.classList.remove('nav-active'));
+        link.classList.add('nav-active');
+
+        // Hitung posisi relatif terhadap sidebar
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const linkRect    = link.getBoundingClientRect();
+
+        // top relatif: jarak dari top sidebar ke center link
+        const relativeTop = linkRect.top - sidebarRect.top + (linkRect.height / 2) - (44 / 2);
+
+        indicator.style.top     = relativeTop + 'px';
+        indicator.style.opacity = '1';
+    }
+
+    // IntersectionObserver untuk setiap section
+    const observerOptions = {
+        root: null,
+        rootMargin: '-40% 0px -40% 0px', // section dianggap aktif saat di tengah viewport
+        threshold: 0
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id   = entry.target.id;
+                const link = sectionLinkMap[id];
+                if (link) moveIndicatorTo(link);
+            }
+        });
+    }, observerOptions);
+
+    sectionIds.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) sectionObserver.observe(section);
+    });
+
+    // Set aktif awal ke Home setelah load
+    setTimeout(() => {
+        if (!currentActive && sectionLinkMap['profile']) {
+            moveIndicatorTo(sectionLinkMap['profile']);
+        }
+    }, 3600); // setelah loading screen selesai
+
+    // Update posisi jika window di-resize (karena posisi sidebar bisa berubah)
+    window.addEventListener('resize', () => {
+        if (currentActive) {
+            const link = currentActive;
+            currentActive = null; // force re-calculate
+            moveIndicatorTo(link);
+        }
+    }, { passive: true });
+})();
+
+
+// ============ [FEATURE 3] MAGNIFY / FOCUS TEXT EFFECT ============
+// Efek kaca pembesar pada tagline: default blur, area cursor menjadi fokus/jelas
+(function initMagnifyText() {
+    const wrap   = document.getElementById('magnifyTextWrap');
+    const tagline = document.getElementById('magnifyTagline');
+    if (!wrap || !tagline) return;
+
+    // Sembunyikan di mobile
+    if (window.innerWidth <= 768) return;
+
+    // Buat overlay lingkaran "kaca pembesar" sebagai visual hint
+    const glassEl = document.createElement('div');
+    glassEl.id = 'magnifyGlassOverlay';
+    wrap.style.position = 'relative'; // pastikan wrap punya positioning
+    wrap.appendChild(glassEl);
+
+    const RADIUS     = 60;  // radius area fokus (px)
+    const BLUR_BASE  = 1.8; // blur default tagline
+    let   isInside   = false;
+
+    // Track posisi mouse relatif terhadap wrap
+    let localX = 0, localY = 0;
+
+    function onMouseMove(e) {
+        const rect = wrap.getBoundingClientRect();
+        localX = e.clientX - rect.left;
+        localY = e.clientY - rect.top;
+
+        // Update posisi kaca pembesar
+        glassEl.style.left   = localX + 'px';
+        glassEl.style.top    = localY + 'px';
+        glassEl.style.width  = (RADIUS * 2) + 'px';
+        glassEl.style.height = (RADIUS * 2) + 'px';
+
+        // Hitung seberapa "dalam" kursor dari tepi area
+        const margin = 10;
+        const inX = localX > -margin && localX < rect.width + margin;
+        const inY = localY > -margin && localY < rect.height + margin;
+
+        if (inX && inY) {
+            // Terapkan efek: gunakan CSS mask via background clip
+            // Pendekatan: pakai radial gradient text-shadow sebagai glow fokus
+            tagline.style.setProperty('--magnify-x', localX + 'px');
+            tagline.style.setProperty('--magnify-y', localY + 'px');
+
+            // Kurangi blur pada area cursor menggunakan WebKitMask
+            // Karena CSS blur tidak bisa per-area, kita pakai pendekatan:
+            // tagline asli blur → duplicate clear layer di atas dengan mask
+            applyFocusEffect(localX, localY, RADIUS);
+        }
+    }
+
+    // Buat elemen tagline duplikat yang tajam, dengan mask radial
+    const taglineClear = tagline.cloneNode(true);
+    taglineClear.removeAttribute('id');
+    taglineClear.style.cssText = `
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        margin: 0;
+        padding: ${window.getComputedStyle(tagline).padding};
+        font-size: ${window.getComputedStyle(tagline).fontSize};
+        line-height: ${window.getComputedStyle(tagline).lineHeight};
+        color: inherit;
+        filter: none;
+        pointer-events: none;
+        -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black 60%, transparent 100%);
+        mask-image: radial-gradient(circle 0px at 50% 50%, black 60%, transparent 100%);
+        transition: none;
+        z-index: 2;
+        opacity: 0;
+    `;
+    wrap.appendChild(taglineClear);
+
+    function applyFocusEffect(x, y, r) {
+        const rect = wrap.getBoundingClientRect();
+        const pctX = (x / rect.width  * 100).toFixed(2) + '%';
+        const pctY = (y / rect.height * 100).toFixed(2) + '%';
+        const maskVal = `radial-gradient(circle ${r}px at ${pctX} ${pctY}, black 30%, transparent 75%)`;
+
+        taglineClear.style.webkitMaskImage = maskVal;
+        taglineClear.style.maskImage       = maskVal;
+        taglineClear.style.opacity         = '1';
+        glassEl.style.opacity              = '1';
+
+        // Text glow pada area fokus untuk efek premium
+        taglineClear.style.textShadow = document.body.classList.contains('dark')
+            ? '0 0 8px rgba(102,153,255,0.4)'
+            : '0 0 8px rgba(244,132,142,0.35)';
+    }
+
+    function onMouseEnter() {
+        isInside = true;
+        // Aktifkan blur pada tagline asli
+        tagline.style.filter = `blur(${BLUR_BASE}px)`;
+        glassEl.style.opacity = '1';
+        taglineClear.style.opacity = '1';
+    }
+
+    function onMouseLeave() {
+        isInside = false;
+        // Kembalikan ke blur default halus
+        tagline.style.filter = `blur(${BLUR_BASE}px)`;
+        // Sembunyikan overlay clear
+        taglineClear.style.opacity = '0';
+        glassEl.style.opacity = '0';
+    }
+
+    wrap.addEventListener('mousemove',  onMouseMove);
+    wrap.addEventListener('mouseenter', onMouseEnter);
+    wrap.addEventListener('mouseleave', onMouseLeave);
+
+    // Sinkronkan teks clear jika ada perubahan DOM (typing effect pada h1 tidak mengganggu tagline)
+    // Update padding clear setelah font loaded
+    document.fonts.ready.then(() => {
+        const cs = window.getComputedStyle(tagline);
+        taglineClear.style.padding    = cs.padding;
+        taglineClear.style.fontSize   = cs.fontSize;
+        taglineClear.style.lineHeight = cs.lineHeight;
+        taglineClear.style.fontWeight = cs.fontWeight;
+        taglineClear.style.fontFamily = cs.fontFamily;
+        taglineClear.style.color      = cs.color;
+    });
+
+    // Update saat theme berubah (warna glow menyesuaikan)
+    const themeToggleEl = document.getElementById('themeToggle');
+    if (themeToggleEl) {
+        themeToggleEl.addEventListener('click', () => {
+            // Re-apply jika cursor masih di dalam
+            if (isInside) applyFocusEffect(localX, localY, RADIUS);
+        });
+    }
+})();
