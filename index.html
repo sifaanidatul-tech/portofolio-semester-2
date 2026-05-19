@@ -1,43 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ============ HEAD / META ============ -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anidatul Sifa - Portfolio</title>
-    <link href="https://cdn.jsdelivr.net/npm/fontsource-poppins@5.0.0/index.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
 
+    <!-- ============ CUSTOM CURSOR ============ -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-dot" id="customCursorDot"></div>
 
-    
+    <!-- ============ CURSOR TRAIL CANVAS [NEW FEATURE] ============ -->
+    <canvas id="cursorTrailCanvas"></canvas>
+
+    <!-- ============ SCROLL PROGRESS BAR ============ -->
+    <div id="scrollStripe"></div>
+
+    <!-- ============ LOADING SCREEN ============ -->
+    <div id="loadingScreen">
+        <div class="ls-bg-shape" style="width:400px;height:400px;top:-100px;left:-100px;background:radial-gradient(circle,rgba(244,132,142,0.15),transparent 70%);animation-duration:6s;--tx:40px;--ty:30px;"></div>
+        <div class="ls-bg-shape" style="width:300px;height:300px;bottom:-80px;right:-80px;background:radial-gradient(circle,rgba(192,132,212,0.15),transparent 70%);animation-duration:8s;animation-delay:-3s;--tx:-30px;--ty:-40px;"></div>
+        <div class="ls-center">
+            <div class="ls-ring"><span class="ls-emoji">✨</span></div>
+            <div class="ls-name" id="lsName"></div>
+            <div class="ls-tagline">Web Developer & UI/UX Designer</div>
+            <div class="ls-progress"><div class="ls-progress-fill"></div></div>
+            <div class="ls-percent" id="lsPercent">0%</div>
+        </div>
+        <div class="ls-panel-tl"></div>
+        <div class="ls-panel-tr"></div>
+        <div class="ls-panel-bl"></div>
+        <div class="ls-panel-br"></div>
+    </div>
+
+    <!-- ============ BACKGROUND EFFECTS ============ -->
+    <!-- Particle layer -->
     <div class="particles" id="particles"></div>
+    <!-- Subtle grid for dark mode -->
     <div class="grid-overlay"></div>
+    <!-- Scanning line for dark mode -->
     <div class="scanline"></div>
+    <!-- Aurora top glow for dark mode -->
     <div class="aurora"></div>
+    <!-- Floating glow orbs -->
     <div class="glow-orb orb1"></div>
     <div class="glow-orb orb2"></div>
     <div class="glow-orb orb3"></div>
 
-   <nav class="sidebar" id="sidebar">
-    <a href="#profile" data-label="Home"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></a>
-    <a href="#about" data-label="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></a>
-    <a href="#skills" data-label="Skills"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></a>
-    <a href="#portfolio" data-label="Portfolio"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg></a>
-    <a href="#contact" data-label="Contact"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
-</nav>
+    <!-- ============ SIDEBAR NAVIGATION ============ -->
+    <nav class="sidebar" id="sidebar">
+        <!-- [NEW FEATURE] Active indicator that follows active section -->
+        <div class="nav-active-indicator" id="navActiveIndicator"></div>
+        <a href="#profile" data-label="Home">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </a>
+        <a href="#about" data-label="About">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </a>
+        <a href="#skills" data-label="Skills">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </a>
+        <a href="#portfolio" data-label="Portfolio">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+        </a>
+        <a href="#contact" data-label="Contact">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        </a>
+    </nav>
 
+    <!-- ============ TOP NAVBAR ============ -->
     <div class="navbar" id="navbar">
+        <!-- Theme toggle button (sun/moon) -->
         <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="themeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="themeIcon">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+            </svg>
         </button>
+        <!-- Brand name (center) -->
         <span class="brand">PROFILE</span>
+        <!-- Close button -->
         <button class="close-btn" id="closeBtn" title="Close">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
         </button>
     </div>
 
+    <!-- ============ GOODBYE OVERLAY ============ -->
     <div class="overlay" id="overlay">
         <div class="overlay-box">
             <h2>👋 Goodbye!</h2>
@@ -46,190 +109,261 @@
         </div>
     </div>
 
+    <!-- ============ MAIN CONTENT ============ -->
     <div class="main-content" id="mainContent">
 
-<section class="profile-section" id="profile">
-    <div class="profile-decor circle1"></div>
-    <div class="profile-decor circle2"></div>
-    <div class="profile-decor dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div class="profile-header">
-        <div class="profile-info">
-            <p class="greeting">Hi, I'm</p>
-            <h1>ANIDATUL SIFA</h1>
-            <p class="tagline">Aspiring Web Developer & UI/UX Designer who is passionate about creating simple, user-friendly, and visually appealing digital experiences.</p>
-            <a href="Rescued document.pdf" class="experience-btn">EXPERIENCE</a>
-        </div>
-        <div class="profile-avatar">
-            <img src="WhatsApp Image 2026-05-06 at 08.27.28.jpeg" alt="Anidatul Sifa">
-        </div>
-    </div>
-</section>
-
-       <section class="about-section" id="about">
-    <div class="about-inner animate-in">
-        <div class="about-photo-frame">
-            <div class="about-photo-inner">
-                <img src="WhatsApp Image 2026-05-06 at 08.20.29.jpeg" alt="About Me">
+        <!-- ============ PROFILE / HERO SECTION ============ -->
+        <section class="profile-section" id="profile">
+            <!-- Decorative background shapes -->
+            <div class="profile-decor circle1"></div>
+            <div class="profile-decor circle2"></div>
+            <div class="profile-decor dots">
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
             </div>
-        </div>
-        <div class="about-text">
-            <div class="about-title-wrap">
-                <div class="about-title">About me</div>
+            <div class="profile-header">
+                <!-- Left: text information -->
+                <div class="profile-info">
+                    <p class="greeting">Hi, I'm</p>
+                    <h1>ANIDATUL SIFA</h1>
+                    <!-- [NEW FEATURE] Magnify focus effect wrapper on tagline -->
+                    <div class="magnify-text-wrap" id="magnifyTextWrap">
+                        <p class="tagline" id="magnifyTagline">Aspiring Web Developer &amp; UI/UX Designer who is passionate about creating simple, user-friendly, and visually appealing digital experiences.</p>
+                    </div>
+                    <a href="pdf/Rescued document.pdf" class="experience-btn magnetic-btn">EXPERIENCE</a>
+                </div>
+                <!-- Right: profile photo -->
+                <div class="profile-avatar">
+                    <img src="asset/WhatsApp Image 2026-05-06 at 08.27.28.jpeg" alt="Anidatul Sifa">
+                </div>
             </div>
-            <p>I am a student with a strong interest in web development and digital design. I have basic skills in HTML, CSS, and UI/UX design using Figma. I am motivated to continuously improve my abilities and create effective, user-friendly digital solutions.</p>
-        </div>
-    </div>
-</section>
+        </section>
 
-                   
+        <!-- ============ ABOUT SECTION ============ -->
+        <section class="about-section" id="about">
+            <div class="about-inner animate-in">
+                <!-- About Me photo frame (jangan diubah) -->
+                <div class="about-photo-frame">
+                    <div class="about-photo-inner">
+                        <img src="asset/WhatsApp Image 2026-05-06 at 08.20.29.jpeg" alt="About Me">
+                    </div>
+                    <!-- Shimmer overlay on photo -->
+                    <div class="about-photo-shine"></div>
+                </div>
+                <!-- About Me text content -->
+                <div class="about-text">
+                    <div class="about-title-wrap">
+                        <div class="about-title">About me</div>
+                    </div>
+                    <p>I am a student with a strong interest in web development and digital design. I have basic skills in HTML, CSS, and UI/UX design using Figma. I am motivated to continuously improve my abilities and create effective, user-friendly digital solutions.</p>
+                </div>
+            </div>
+        </section>
 
+        <!-- ============ SKILLS SECTION ============ -->
         <section class="skills-section" id="skills">
             <div style="max-width:950px;margin:0 auto;width:100%">
-                <h2 class="animate-in"><span class="my-text">my </span><span class="skills-text">skills</span></h2>
+                <!-- Skills heading -->
+                <h2 class="animate-in">
+                    <span class="my-text">my </span><span class="skills-text">skills</span>
+                </h2>
                 <div class="skills-container">
-                   <div class="skills-list animate-in">
-    <div class="skill-item">
-        <div class="skill-icon html">
-            <i class="fab fa-html5"></i>
-            Html
-        </div>
-        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-width="60"></div></div>
-        <span class="skill-percent">60%</span>
-    </div>
-    
-    <div class="skill-item">
-        <div class="skill-icon css">
-            <i class="fab fa-css3-alt"></i>
-            Css
-        </div>
-        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-width="50"></div></div>
-        <span class="skill-percent">50%</span>
-    </div>
-    
-    <div class="skill-item">
-        <div class="skill-icon js">
-            <i class="fab fa-js"></i>
-            Java script
-        </div>
-        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-width="50"></div></div>
-        <span class="skill-percent">50%</span>
-    </div>
-    
-    <div class="skill-item">
-        <div class="skill-icon figma">
-            <i class="fab fa-figma"></i>
-            Figma
-        </div>
-        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-width="50"></div></div>
-        <span class="skill-percent">50%</span>
-    </div>
-    
-    <div class="skill-item">
-        <div class="skill-icon git">
-            <i class="fab fa-github"></i>
-            Git hub
-        </div>
-        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-width="50"></div></div>
-        <span class="skill-percent">50%</span>
-    </div>
-</div>
+                    <!-- Skill bars list -->
+                    <div class="skills-list animate-in">
 
-                    <!-- 🤖 ROBOT SPLINE ASLI KAMU -->
+                        <!-- HTML Skill -->
+                        <div class="skill-item">
+                            <div class="skill-icon html">
+                                <i class="fab fa-html5"></i>
+                                Html
+                            </div>
+                            <div class="skill-bar-wrap">
+                                <div class="skill-bar-fill" data-width="60"></div>
+                            </div>
+                            <span class="skill-percent" data-pct="60">0%</span>
+                        </div>
+
+                        <!-- CSS Skill -->
+                        <div class="skill-item">
+                            <div class="skill-icon css">
+                                <i class="fab fa-css3-alt"></i>
+                                Css
+                            </div>
+                            <div class="skill-bar-wrap">
+                                <div class="skill-bar-fill" data-width="50"></div>
+                            </div>
+                            <span class="skill-percent" data-pct="50">0%</span>
+                        </div>
+
+                        <!-- JavaScript Skill -->
+                        <div class="skill-item">
+                            <div class="skill-icon js">
+                                <i class="fab fa-js"></i>
+                                Java script
+                            </div>
+                            <div class="skill-bar-wrap">
+                                <div class="skill-bar-fill" data-width="20"></div>
+                            </div>
+                            <span class="skill-percent" data-pct="20">0%</span>
+                        </div>
+
+                        <!-- Figma Skill -->
+                        <div class="skill-item">
+                            <div class="skill-icon figma">
+                                <i class="fab fa-figma"></i>
+                                Figma
+                            </div>
+                            <div class="skill-bar-wrap">
+                                <div class="skill-bar-fill" data-width="50"></div>
+                            </div>
+                            <span class="skill-percent" data-pct="50">0%</span>
+                        </div>
+
+                        <!-- GitHub Skill -->
+                        <div class="skill-item">
+                            <div class="skill-icon git">
+                                <i class="fab fa-github"></i>
+                                GitHub
+                            </div>
+                            <div class="skill-bar-wrap">
+                                <div class="skill-bar-fill" data-width="65"></div>
+                            </div>
+                            <span class="skill-percent" data-pct="65">0%</span>
+                        </div>
+
+                    </div><!-- /skills-list -->
+
+                    <!-- 🤖 ROBOT SPLINE (jangan diubah) -->
                     <div class="robot-wrapper animate-in" id="robotWrapper">
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
-    <spline-viewer url="https://prod.spline.design/tO6FV6FlEJeNaJ3X/scene.splinecode"></spline-viewer>
-</div>
+                        <!-- Robot glow effect ring -->
+                        <div class="robot-glow-ring"></div>
+                        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
+                        <spline-viewer url="https://prod.spline.design/tO6FV6FlEJeNaJ3X/scene.splinecode"></spline-viewer>
+                    </div>
 
-                </div>
+                </div><!-- /skills-container -->
             </div>
         </section>
 
-        <!-- PORTFOLIO SECTION - KARTU SUDAH DIBUAT LINK KE WEB KAMU -->
+        <!-- ============ PORTFOLIO SECTION ============ -->
         <section class="portfolio-section" id="portfolio">
             <div class="animate-in" style="max-width:950px;margin:0 auto;width:100%">
+                <!-- Portfolio heading -->
                 <h2>MY PORTOFOLIO</h2>
                 <div class="portfolio-carousel-wrap">
+                    <!-- Carousel navigation buttons (top right) -->
                     <div class="carousel-nav-top">
-                        <button class="carousel-btn-top" id="prevBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
-                        <button class="carousel-btn-top" id="nextBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button>
+                        <button class="carousel-btn-top" id="prevBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                        </button>
+                        <button class="carousel-btn-top" id="nextBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        </button>
                     </div>
-                   <div class="portfolio-carousel" id="portfolioCarousel">
-    
-    <a href="https://sifaanidatul-tech.github.io/kolaborasi-semester-1/" target="_blank" class="portfolio-card" style="text-decoration:none;">
-        <div class="port-img p1">
-            <img src="https://images.pexels.com/photos/3230539/pexels-photo-3230539.jpeg" alt="Project 1" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
-        </div>
-        <div class="port-label">click</div>
-    </a>
 
-    <a href="https://sifaanidatul-tech.github.io/landing-page-environment/" target="_blank" class="portfolio-card" style="text-decoration:none;">
-        <div class="port-img p2">
-            <img src="https://images.pexels.com/photos/35865693/pexels-photo-35865693.jpeg" alt="Project 2" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
-        </div>
-        <div class="port-label">click</div>
-    </a>
+                    <!-- Portfolio cards carousel (5 cards - jangan ditambah/dikurangi) -->
+                    <div class="portfolio-carousel" id="portfolioCarousel">
 
-    <a href="https://sifaanidatul-tech.github.io/tugas-empat/" target="_blank" class="portfolio-card" style="text-decoration:none;">
-        <div class="port-img p3">
-            <img src="https://images.pexels.com/photos/19826686/pexels-photo-19826686.jpeg" alt="Project 3" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
-        </div>
-        <div class="port-label">click</div>
-    </a>
+                        <!-- Portfolio Card 1 -->
+                        <a href="https://sifaanidatul-tech.github.io/kolaborasi-semester-1/" target="_blank" class="portfolio-card" style="text-decoration:none;">
+                            <div class="port-img p1">
+                                <img src="https://images.pexels.com/photos/3230539/pexels-photo-3230539.jpeg" alt="Project 1" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                                <!-- Shine overlay on hover -->
+                                <div class="card-shine"></div>
+                            </div>
+                            <div class="port-label">click</div>
+                        </a>
 
-    <a href="https://sifaanidatul-tech.github.io/tugas-5/" target="_blank" class="portfolio-card" style="text-decoration:none;">
-        <div class="port-img p4">
-            <img src="https://images.pexels.com/photos/3411139/pexels-photo-3411139.jpeg" alt="Project 4" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
-        </div>
-        <div class="port-label">click</div>
-    </a>
+                        <!-- Portfolio Card 2 -->
+                        <a href="https://sifaanidatul-tech.github.io/landing-page-sekolah/" target="_blank" class="portfolio-card" style="text-decoration:none;">
+                            <div class="port-img p2">
+                                <img src="https://images.pexels.com/photos/35865693/pexels-photo-35865693.jpeg" alt="Project 2" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                                <div class="card-shine"></div>
+                            </div>
+                            <div class="port-label">click</div>
+                        </a>
 
-     <a href="https://sifaanidatul-tech.github.io/tugas-5/" target="_blank" class="portfolio-card" style="text-decoration:none;">
-        <div class="port-img p4">
-            <img src="https://images.pexels.com/photos/896291/pexels-photo-896291.jpeg" alt="Project 4" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
-        </div>
-        <div class="port-label">click</div>
-    </a>
+                        <!-- Portfolio Card 3 -->
+                
+                        <a href="https://sifaanidatul-tech.github.io/landing-page-environment/" target="_blank" class="portfolio-card" style="text-decoration:none;">
+                            <div class="port-img p3">
+                                <img src="https://images.pexels.com/photos/19826686/pexels-photo-19826686.jpeg" alt="Project 3" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                                <div class="card-shine"></div>
+                            </div>
+                            <div class="port-label">click</div>
+                        </a>
 
-    
+                        <!-- Portfolio Card 4 -->
+                        <a href="https://sifaanidatul-tech.github.io/tugas-empat/" target="_blank" class="portfolio-card" style="text-decoration:none;">
+                            <div class="port-img p4">
+                                <img src="https://images.pexels.com/photos/3411139/pexels-photo-3411139.jpeg" alt="Project 4" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                                <div class="card-shine"></div>
+                            </div>
+                            <div class="port-label">click</div>
+                        </a>
 
-</div>
+                        <!-- Portfolio Card 5 -->
+                        <a href="https://sifaanidatul-tech.github.io/tugas-5/" target="_blank" class="portfolio-card" style="text-decoration:none;">
+                            <div class="port-img p4">
+                                <img src="https://images.pexels.com/photos/896291/pexels-photo-896291.jpeg" alt="Project 5" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                                <div class="card-shine"></div>
+                            </div>
+                            <div class="port-label">click</div>
+                        </a>
 
-                    </div>
+                    </div><!-- /portfolio-carousel -->
                 </div>
             </div>
         </section>
 
+        <!-- ============ CONTACT SECTION ============ -->
         <section class="contact-section" id="contact">
             <div class="contact-inner">
+                <!-- Contact info cards -->
                 <div class="contact-info animate-in">
+                    <!-- Location -->
                     <div class="contact-item">
-                        <div class="contact-icon loc"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg></div>
+                        <div class="contact-icon loc">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+                        </div>
                         <span>kec.tengaran kab.semarang</span>
                     </div>
+                    <!-- Email -->
                     <div class="contact-item">
-                        <div class="contact-icon mail"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+                        <div class="contact-icon mail">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </div>
                         <span>sifaanidatul@gmail.com</span>
                     </div>
+                    <!-- Phone -->
                     <div class="contact-item">
-                        <div class="contact-icon phone"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+                        <div class="contact-icon phone">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </div>
                         <span>+62 857 2779 4813</span>
                     </div>
                 </div>
+
+                <!-- Contact form -->
                 <div class="contact-form animate-in">
                     <label>NAME</label>
                     <input type="text" placeholder="your name">
                     <label>Your Email</label>
                     <input type="email" placeholder="Enter your Email">
                     <label>Message</label>
-                    <textarea placeholder=""></textarea>
-                    <button type="button" class="submit-btn" onclick="alert('Message sent! Thank you!')">submit</button>
+                    <textarea placeholder="Your message here..."></textarea>
+                    <button type="button" class="submit-btn magnetic-btn" onclick="handleSubmit(this)">submit</button>
                 </div>
             </div>
         </section>
 
+        <!-- ============ FOOTER ============ -->
         <footer class="footer">
             <div class="footer-inner">
+                <!-- Footer email badge -->
                 <div class="footer-email">sifaanidatul@gmail.com</div>
+                <!-- Footer nav links -->
                 <div class="footer-links">
                     <a href="#profile">Profile</a>
                     <a href="#about">About</a>
@@ -237,23 +371,33 @@
                     <a href="#portfolio">My portofolio</a>
                     <a href="#contact">Contact</a>
                 </div>
+                <!-- Social media links -->
                 <div>
                     <p style="font-size:17px;font-weight:600;margin-bottom:12px">Follow Us</p>
                     <div class="social-links">
-                        <a href="#" title="GitHub"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
-                        <a href="#" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-                        <a href="#" title="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                        <a href="https://github.com/sifaanidatul-tech" title="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                        <a href="https://instagram.com/sip_andtl" title="Instagram">
+                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                        <a href="https://Facebook.com/Anidatul sifa" title="Facebook">
+                            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
                     </div>
                 </div>
             </div>
+            <!-- Footer copyright bar -->
             <div class="footer-bottom"><p>my portofolio &copy; 2026 Anidatul Sifa</p></div>
         </footer>
 
-    </div>
+    </div><!-- /main-content -->
 
+    <!-- Bootstrap 5 Bundle JS (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Script -->
     <script src="script.js"></script>
 
-
-    
 </body>
 </html>
