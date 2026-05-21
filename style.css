@@ -757,7 +757,7 @@ body.dark .portfolio-section h2 {
     border: 3px solid #6699ff; box-shadow: 6px 6px 0 #4a6cb8;
 }
 
-.portfolio-carousel-wrap { position: relative; width: 100%; overflow: hidden; }
+.portfolio-carousel-wrap { position: relative; width: 100%; overflow: visible; }
 
 /* Navigation arrows */
 .carousel-nav-top {
@@ -775,17 +775,15 @@ body.dark .carousel-btn-top { background: #1a1a5e; border-color: #6699ff; color:
 
 /* Carousel scrollable track */
 .portfolio-carousel {
-    display: flex; align-items: center; gap: 18px;
-    padding: 40px 30px 100px 30px;
-    overflow-x: auto; scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    -ms-overflow-style: none; scrollbar-width: none;
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 24px;
+    padding: 40px 20px 60px 20px;
+    overflow: visible;
 }
-.portfolio-carousel::-webkit-scrollbar { display: none; }
 
 /* Portfolio card base styles */
 .portfolio-card {
-    flex: 0 0 auto; scroll-snap-align: center;
+    flex: 0 0 auto;
     display: flex; flex-direction: column; align-items: center;
     opacity: 1 !important; position: relative;
     transition: all 0.4s cubic-bezier(0.25,1,0.5,1);
