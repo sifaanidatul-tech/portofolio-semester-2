@@ -773,12 +773,14 @@ body.dark .portfolio-section h2 {
 .carousel-btn-top:hover { transform: scale(1.15); box-shadow: 4px 4px 0 #000; }
 body.dark .carousel-btn-top { background: #1a1a5e; border-color: #6699ff; color: #fff; }
 
-/* Carousel scrollable track */
+/* Carousel scrollable track — semua 5 card 1 baris */
 .portfolio-carousel {
     display: flex; align-items: center; justify-content: center;
-    flex-wrap: wrap; gap: 24px;
-    padding: 40px 20px 60px 20px;
+    flex-wrap: nowrap; gap: 16px;
+    padding: 40px 10px 60px 10px;
     overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Portfolio card base styles */
@@ -789,15 +791,15 @@ body.dark .carousel-btn-top { background: #1a1a5e; border-color: #6699ff; color:
     transition: all 0.4s cubic-bezier(0.25,1,0.5,1);
 }
 
-/* Size distribution: semua card ukuran sama rata (sedang) */
+/* Size distribution: semua card ukuran sama rata, pas 5 dalam 1 baris */
 .portfolio-card:nth-child(1),
 .portfolio-card:nth-child(2),
 .portfolio-card:nth-child(3),
 .portfolio-card:nth-child(4),
-.portfolio-card:nth-child(5) { width: 180px; height: 180px; }
+.portfolio-card:nth-child(5) { width: 155px; height: 155px; }
 
-.portfolio-card.near   { width: 180px; height: 180px; opacity: 0.9 !important; }
-.portfolio-card.center { width: 180px; height: 180px; opacity: 1 !important; z-index: 10; }
+.portfolio-card.near   { width: 155px; height: 155px; opacity: 0.9 !important; }
+.portfolio-card.center { width: 155px; height: 155px; opacity: 1 !important; z-index: 10; }
 
 /* Image wrapper */
 .port-img {
