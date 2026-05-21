@@ -980,16 +980,16 @@ window.addEventListener('resize', () => {
 
     function onMouseEnter() {
         isInside = true;
-        // Aktifkan blur pada tagline asli
-        tagline.style.filter = `blur(${BLUR_BASE}px)`;
+        // Blur dihapus — tagline selalu jelas
+        tagline.style.filter = 'none';
         glassEl.style.opacity = '1';
         taglineClear.style.opacity = '1';
     }
 
     function onMouseLeave() {
         isInside = false;
-        // Kembalikan ke blur default halus
-        tagline.style.filter = `blur(${BLUR_BASE}px)`;
+        // Tidak kembalikan blur — tagline tetap jelas
+        tagline.style.filter = 'none';
         // Sembunyikan overlay clear
         taglineClear.style.opacity = '0';
         glassEl.style.opacity = '0';
